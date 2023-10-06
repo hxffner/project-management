@@ -3,7 +3,6 @@ package server.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 
@@ -15,18 +14,15 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @NotNull
     @NotBlank
     @Column(name = "username")
     private String username;
 
-    @NotNull
     @NotBlank
     @Email
     @Column(name = "email")
     private String email;
 
-    @NotNull
     @NotBlank
     @Column(name = "password")
     private String password;
