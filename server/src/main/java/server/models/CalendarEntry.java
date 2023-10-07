@@ -15,7 +15,7 @@ public class CalendarEntry {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "project")
+    @JoinColumn(name = "project_id")
     private Project project;
 
     @NotBlank
@@ -26,28 +26,27 @@ public class CalendarEntry {
     private String description;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    @Column(name = "start_date")
-    private Date start_date;
+    @Column(name = "startDate")
+    private Date startDate;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    @Column(name = "end_date")
-    private Date end_date;
+    @Column(name = "endDate")
+    private Date endDate;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    @Column(name = "created_at")
-    private Date created_at;
+    @Column(name = "createdAt")
+    private Date createdAt;
 
     @OneToOne
     @JoinColumn(name = "created_by_user_id")
     private User user;
 
-
-    public CalendarEntry(Project project, String name, String description, Date start_date, Date end_date) {
+    public CalendarEntry(Project project, String name, String description, Date startDate, Date endDate) {
         this.project = project;
         this.name = name;
         this.description = description;
-        this.start_date = start_date;
-        this.end_date = end_date;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     public CalendarEntry() {
@@ -85,22 +84,37 @@ public class CalendarEntry {
         this.description = description;
     }
 
-    public Date getStart_date() {
-        return start_date;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setStart_date(Date start_date) {
-        this.start_date = start_date;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
-    public Date getEnd_date() {
-        return end_date;
+    public Date getEndDate() {
+        return endDate;
     }
 
-    public void setEnd_date(Date end_date) {
-        this.end_date = end_date;
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     @Override
     public String toString() {
@@ -108,8 +122,10 @@ public class CalendarEntry {
                 ", project=" + project +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", start_date=" + start_date +
-                ", end_date=" + end_date;
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", createdAt=" + createdAt +
+                ", user=" + user;
     }
 
     @Override
@@ -117,11 +133,18 @@ public class CalendarEntry {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CalendarEntry that = (CalendarEntry) o;
-        return Objects.equals(id, that.id) && Objects.equals(project, that.project) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(start_date, that.start_date) && Objects.equals(end_date, that.end_date);
+        return Objects.equals(id, that.id) &&
+                Objects.equals(project, that.project) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(startDate, that.startDate) &&
+                Objects.equals(endDate, that.endDate) &&
+                Objects.equals(createdAt, that.createdAt) &&
+                Objects.equals(user, that.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, project, name, description, start_date, end_date);
+        return Objects.hash(id, project, name, description, startDate, endDate, createdAt, user);
     }
 }

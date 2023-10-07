@@ -1,37 +1,36 @@
 package server.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import java.util.Date;
 import java.util.Objects;
 
+@Entity
 public class Task extends CalendarEntry {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name = "due_date")
-    private Date due_date;
+    private Date dueDate;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id")
+    @Enumerated(EnumType.ORDINAL)
     private StatusEnum status;
 
-    public Task(Project project, String name, String description, Date start_date, Date end_date, Date due_date) {
-        super(project, name, description, start_date, end_date);
-        this.due_date = due_date;
+    public Task(Project project, String name, String description, Date startDate, Date endDate, Date dueDate) {
+        super(project, name, description, startDate, endDate);
+        this.dueDate = dueDate;
+        this.status = StatusEnum.IN_QUEUE;
     }
 
-    public Task(Date due_date) {
-        this.due_date = due_date;
+    public Task(Date dueDate) {
+        this.dueDate = dueDate;
     }
 
-    public Date getDue_date() {
-        return due_date;
+    public Date getDueDate() {
+        return dueDate;
     }
 
-    public void setDue_date(Date due_date) {
-        this.due_date = due_date;
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
     }
 
     public StatusEnum getStatus() {
@@ -46,7 +45,7 @@ public class Task extends CalendarEntry {
     public String toString() {
         return "Task{" +
                 super.toString() +
-                "due_date=" + due_date +
+                ", dueDate=" + dueDate +
                 ", status=" + status +
                 '}';
     }
@@ -57,11 +56,12 @@ public class Task extends CalendarEntry {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Task task = (Task) o;
-        return Objects.equals(due_date, task.due_date) && Objects.equals(status, task.status);
+        return Objects.equals(dueDate, task.dueDate) &&
+                Objects.equals(status, task.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), due_date, status);
+        return Objects.hash(super.hashCode(), dueDate, status);
     }
 }

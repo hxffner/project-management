@@ -1,5 +1,6 @@
 package server.models;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -9,7 +10,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class Event extends CalendarEntry{
+@Entity
+public class Event extends CalendarEntry {
     @ManyToMany
     @JoinTable(
             name = "event_user",
@@ -18,8 +20,8 @@ public class Event extends CalendarEntry{
     )
     private List<User> attendees = new ArrayList<>();
 
-    public Event(Project project, String name, String description, Date start_date, Date end_date, List<User> attendees) {
-        super(project, name, description, start_date, end_date);
+    public Event(Project project, String name, String description, Date startDate, Date endDate, List<User> attendees) {
+        super(project, name, description, startDate, endDate);
         this.attendees = attendees;
     }
 
@@ -39,7 +41,7 @@ public class Event extends CalendarEntry{
     public String toString() {
         return "Event{" +
                 super.toString() +
-                "attendees=" + attendees +
+                ", attendees=" + attendees +
                 '}';
     }
 
