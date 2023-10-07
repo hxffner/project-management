@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +25,7 @@ public class Project {
 
     @OneToMany
     @JoinColumn(name = "related_tasks")
-    private List<Task> related_tasks = new ArrayList<>();
+    private List<Task> relatedTasks = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -32,38 +33,36 @@ public class Project {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> project_members = new ArrayList<>();
+    private List<User> projectMembers = new ArrayList<>();
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name = "start_date")
-    private Date start_date;
+    private Date startDate;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name = "end_date")
-    private Date end_date;
+    private Date endDate;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name = "due_date")
-    private Date due_date;
+    private Date dueDate;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name = "created_at")
-    private Date created_at;
+    private Date createdAt;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "created_by_user_id")
-    private User user;
+    private User createdByUser;
 
-    public Project(String name, String description, List<Task> related_tasks, List<User> project_members, Date start_date, Date end_date, Date due_date, Date created_at, User user) {
+    public Project(String name, String description, List<Task> relatedTasks, List<User> projectMembers, Date startDate, Date endDate, Date dueDate) {
         this.name = name;
         this.description = description;
-        this.related_tasks = related_tasks;
-        this.project_members = project_members;
-        this.start_date = start_date;
-        this.end_date = end_date;
-        this.due_date = due_date;
-        this.created_at = created_at;
-        this.user = user;
+        this.relatedTasks = relatedTasks;
+        this.projectMembers = projectMembers;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.dueDate = dueDate;
     }
 
     public Project() {
@@ -93,60 +92,60 @@ public class Project {
         this.description = description;
     }
 
-    public List<Task> getRelated_tasks() {
-        return related_tasks;
+    public List<Task> getRelatedTasks() {
+        return relatedTasks;
     }
 
-    public void setRelated_tasks(List<Task> related_tasks) {
-        this.related_tasks = related_tasks;
+    public void setRelatedTasks(List<Task> relatedTasks) {
+        this.relatedTasks = relatedTasks;
     }
 
-    public List<User> getProject_members() {
-        return project_members;
+    public List<User> getProjectMembers() {
+        return projectMembers;
     }
 
-    public void setProject_members(List<User> project_members) {
-        this.project_members = project_members;
+    public void setProjectMembers(List<User> projectMembers) {
+        this.projectMembers = projectMembers;
     }
 
-    public Date getStart_date() {
-        return start_date;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setStart_date(Date start_date) {
-        this.start_date = start_date;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
-    public Date getEnd_date() {
-        return end_date;
+    public Date getEndDate() {
+        return endDate;
     }
 
-    public void setEnd_date(Date end_date) {
-        this.end_date = end_date;
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
-    public Date getDue_date() {
-        return due_date;
+    public Date getDueDate() {
+        return dueDate;
     }
 
-    public void setDue_date(Date due_date) {
-        this.due_date = due_date;
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
     }
 
-    public Date getCreated_at() {
-        return created_at;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public User getUser() {
-        return user;
+    public User getCreatedByUser() {
+        return createdByUser;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setCreatedByUser(User user) {
+        this.createdByUser = user;
     }
 
     @Override
@@ -155,13 +154,13 @@ public class Project {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", related_tasks=" + related_tasks +
-                ", project_members=" + project_members +
-                ", start_date=" + start_date +
-                ", end_date=" + end_date +
-                ", due_date=" + due_date +
-                ", created_at=" + created_at +
-                ", user=" + user +
+                ", relatedTasks=" + relatedTasks +
+                ", projectMembers=" + projectMembers +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", dueDate=" + dueDate +
+                ", createdAt=" + createdAt +
+                ", user=" + createdByUser +
                 '}';
     }
 
@@ -170,11 +169,20 @@ public class Project {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-        return Objects.equals(id, project.id) && Objects.equals(name, project.name) && Objects.equals(description, project.description) && Objects.equals(related_tasks, project.related_tasks) && Objects.equals(project_members, project.project_members) && Objects.equals(start_date, project.start_date) && Objects.equals(end_date, project.end_date) && Objects.equals(due_date, project.due_date) && Objects.equals(created_at, project.created_at) && Objects.equals(user, project.user);
+        return Objects.equals(id, project.id) &&
+                Objects.equals(name, project.name) &&
+                Objects.equals(description, project.description) &&
+                Objects.equals(relatedTasks, project.relatedTasks) &&
+                Objects.equals(projectMembers, project.projectMembers) &&
+                Objects.equals(startDate, project.startDate) &&
+                Objects.equals(endDate, project.endDate) &&
+                Objects.equals(dueDate, project.dueDate) &&
+                Objects.equals(createdAt, project.createdAt) &&
+                Objects.equals(createdByUser, project.createdByUser);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, related_tasks, project_members, start_date, end_date, due_date, created_at, user);
+        return Objects.hash(id, name, description, relatedTasks, projectMembers, startDate, endDate, dueDate, createdAt, createdByUser);
     }
 }
