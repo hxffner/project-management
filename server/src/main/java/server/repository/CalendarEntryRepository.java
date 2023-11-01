@@ -15,7 +15,7 @@ public interface CalendarEntryRepository extends JpaRepository<CalendarEntry, Lo
 
     List<CalendarEntry> findByProjectId(Long projectId);
 
-    List<CalendarEntry> findByUserId(Long userId);
+    List<CalendarEntry> findByCreatedByUserId(Long userId);
 
     @Override
     List<CalendarEntry> findAll();
