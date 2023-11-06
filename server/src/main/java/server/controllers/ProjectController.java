@@ -32,7 +32,7 @@ public class ProjectController {
 
     @GetMapping("/projects/by_user/{userId}")
     public List<Project> getProjectByUserId(@PathVariable(value="userId") Long userId) {
-        return projectRepository.findByUserId(userId);
+        return projectRepository.findByCreatedByUserId(userId);
     }
 
     @GetMapping("/projects/{id}/calendar-entries")
