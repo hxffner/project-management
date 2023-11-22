@@ -9,14 +9,13 @@ export const getMonth = (year: number, month: number): Dayjs[][] => {
 
   const matrix = [];
   let currentRow = [];
-  let date = startOfMonth.subtract(startDay, 'day');
+  let date = startOfMonth.subtract(startDay, "day");
 
   for (let row = 0; row < numRows; row++) {
     currentRow = [];
     for (let col = 0; col < 7; col++) {
       currentRow.push(dayjs(date));
-      date = date.add(1, 'day');
-      
+      date = date.add(1, "day");
     }
     matrix.push(currentRow);
   }
@@ -24,3 +23,6 @@ export const getMonth = (year: number, month: number): Dayjs[][] => {
   return matrix;
 };
 
+export const isSameDay = (day1: Dayjs, day2: Dayjs) => {
+  return day1.isSame(day2, "day");
+};
