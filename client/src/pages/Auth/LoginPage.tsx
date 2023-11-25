@@ -19,7 +19,7 @@ const LoginPage: FC = () => {
     event.preventDefault();
 
     if (values.pwd !== "pwd1" && values.user !== "user1") {
-      alert("Hibás jelszó vagy felhasználónév!");
+      alert("Incorrect password or username!");
       return;
     }
 

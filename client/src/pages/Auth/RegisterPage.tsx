@@ -28,6 +28,7 @@ const RegisterPage: FC = () => {
     // TODO: verify datas
     if (!validateEmail(values.email)) {
       alert("email is not valid");
+      return;
     }
     if (values.pwd1 !== values.pwd2) {
       alert("passwords are not the same");
