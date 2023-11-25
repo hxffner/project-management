@@ -2,10 +2,10 @@ import { FC, useState } from "react";
 import WeekView from "./components/WeekView";
 import MonthView from "./components/MonthView";
 import dayjs, { Dayjs } from "dayjs";
+import AddModal from "./components/AddModal";
 
 const CalendarPage: FC = () => {
   const [date, setDate] = useState<Dayjs>(dayjs());
-
   const [selectedView, setSelectedView] = useState<string>("week");
 
   let viewComponent;
@@ -33,7 +33,12 @@ const CalendarPage: FC = () => {
               >
                 {"<"}
               </button>
-              <button className="join-item btn btn-ghost normal-case text-xl">
+              <button
+                className="join-item btn btn-ghost normal-case text-xl"
+                onClick={() => {
+                  setDate(dayjs());
+                }}
+              >
                 Today
               </button>
               <button
@@ -60,9 +65,17 @@ const CalendarPage: FC = () => {
               <option value={`year`}>Year View</option>
             </select>
             <div className="divider divider-horizontal"></div>
-            <button className="join-item btn btn-ghost normal-case text-xl">
+            <button
+              className="join-item btn btn-ghost normal-case text-xl"
+              onClick={() => {
+                (
+                  document!.getElementById("my_modal_2") as HTMLFormElement
+                ).showModal();
+              }}
+            >
               Add Event
             </button>
+            <AddModal />
           </div>
         </div>
       </div>

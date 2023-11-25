@@ -30,6 +30,6 @@ public class CalendarEntryController {
 
     @GetMapping("/calendar-entries/by_user/{userId}")
     public List<CalendarEntry> getCalendarEntryByUserId(@PathVariable(value="userId") Long userId) {
-        return calendarEntryRepository.findByUserId(userId);
+        return calendarEntryRepository.findByCreatedByUserId(userId);
     }
 }
