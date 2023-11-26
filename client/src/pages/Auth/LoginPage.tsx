@@ -1,36 +1,31 @@
-import { ChangeEvent, FC, useState } from "react";
+import { FC, FormEvent, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-
-interface FormValues {
-  user: string;
-  pwd: string;
-}
+import { login } from "../../features/auth/authSlice";
+import { useAppDispatch } from "../../app/hooks";
 
 const LoginPage: FC = () => {
-  const [values, setValues] = useState<FormValues>({ user: "", pwd: "" });
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const login = (user: string): void => {
-    console.log("succesfull login: " + user);
-    navigate("/calendar");
-  };
+  const username = useRef<HTMLInputElement | null>(null);
+  const password = useRef<HTMLInputElement | null>(null);
 
-  const handleSubmit = (event: React.FormEvent): void => {
-    event.preventDefault();
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
 
-    if (values.pwd !== "pwd1" && values.user !== "user1") {
-      alert("Hibás jelszó vagy felhasználónév!");
+    const usernameValue = username.current?.value;
+    const passwordValue = password.current?.value;
+
+    if (!usernameValue || !passwordValue) {
       return;
     }
 
-    login(values.user);
-  };
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    setValues((prevValues) => ({
-      ...prevValues,
-      [event.target.name]: event.target.value,
-    }));
+    try {
+      await dispatch(login({ username: usernameValue, password: passwordValue }));
+      navigate('/'); 
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
   };
 
   return (
@@ -44,21 +39,15 @@ const LoginPage: FC = () => {
           type="text"
           placeholder="Username"
           className="input input-bordered w-full max-w-md"
-          id="user"
-          name="user"
-          value={values.user}
-          onChange={handleChange}
+          ref={username}
         />
         <input
           type="password"
           placeholder="Password"
           className="input input-bordered w-full max-w-md"
-          id="password"
-          name="pwd"
-          value={values.pwd}
-          onChange={handleChange}
+          ref={password}
         />
-        <button type="submit" className="btn ">
+        <button type="submit" className="btn btn-block max-w-md">
           Login
         </button>
       </form>

@@ -1,102 +1,87 @@
-import { ChangeEvent, FC, useState } from "react";
+import { FC, useRef, FormEvent } from "react";
+import { useAppDispatch } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
-
-interface FormValues {
-  username: string;
-  email: string;
-  pwd1: string;
-  pwd2: string;
-}
+import { register } from "../../features/auth/authSlice";
 
 const RegisterPage: FC = () => {
-  const [values, setValues] = useState<FormValues>({
-    username: "",
-    email: "",
-    pwd1: "",
-    pwd2: "",
-  });
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const register = (uservalues: FormValues): void => {
-    console.log("succesfull register: " + uservalues.username);
-    navigate("/calendar");
-  };
+  const username = useRef<HTMLInputElement | null>(null);
+  const email = useRef<HTMLInputElement | null>(null);
+  const password = useRef<HTMLInputElement | null>(null);
+  const confirmPassword = useRef<HTMLInputElement | null>(null);
 
-  const handleSubmit = (event: React.FormEvent): void => {
-    event.preventDefault();
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const usernameValue = username.current?.value;
+    const emailValue = email.current?.value;
+    const passwordValue = password.current?.value;
+    const confirmPasswordValue = confirmPassword.current?.value;
 
-    // TODO: verify datas
-    if (!validateEmail(values.email)) {
-      alert("email is not valid");
-    }
-    if (values.pwd1 !== values.pwd2) {
-      alert("passwords are not the same");
+    if (
+      !usernameValue ||
+      !emailValue ||
+      !passwordValue ||
+      !confirmPasswordValue
+    ) {
       return;
     }
 
-    register(values);
-  };
+    if (passwordValue !== confirmPasswordValue) {
+      return;
+    }
 
-  const validateEmail = (input: string): boolean => {
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    return emailRegex.test(input);
-  };
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    setValues((prevValues) => ({
-      ...prevValues,
-      [event.target.name]: event.target.value,
-    }));
+    try {
+      await dispatch(
+        register({
+          username: usernameValue,
+          email: emailValue,
+          password: passwordValue,
+        })
+      );
+      navigate("/login");
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
   };
 
   return (
-    <div className="mt-24">
-      <form
-        className="flex flex-col items-center gap-2"
-        onSubmit={handleSubmit}
-      >
+    <form onSubmit={handleSubmit} className="mt-24">
+      <div className="flex flex-col items-center mt-8 gap-2">
         <span className="text-2xl font-semibold mb-2">Register Form</span>
         <input
           type="text"
           placeholder="Username"
+          ref={username}
           className="input input-bordered w-full max-w-md"
-          id="username"
-          name="username"
-          value={values.username}
-          onChange={handleChange}
         />
+
         <input
           type="email"
-          placeholder="Email Address"
+          placeholder="Email"
+          ref={email}
           className="input input-bordered w-full max-w-md"
-          id="email"
-          name="email"
-          value={values.email}
-          onChange={handleChange}
         />
+
         <input
           type="password"
           placeholder="Password"
+          ref={password}
           className="input input-bordered w-full max-w-md"
-          id="pwd1"
-          name="pwd1"
-          value={values.pwd1}
-          onChange={handleChange}
         />
+
         <input
           type="password"
-          placeholder="Password Again"
+          placeholder="Confirm Password"
+          ref={confirmPassword}
           className="input input-bordered w-full max-w-md"
-          id="pwd2"
-          name="pwd2"
-          value={values.pwd2}
-          onChange={handleChange}
         />
-        <button type="submit" className="btn ">
+        <button type="submit" className="btn btn-block max-w-md">
           Register
         </button>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 };
 
