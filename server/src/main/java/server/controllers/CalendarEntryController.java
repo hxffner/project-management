@@ -1,10 +1,7 @@
 package server.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import server.models.CalendarEntry;
 import server.repository.CalendarEntryRepository;
 
@@ -31,5 +28,20 @@ public class CalendarEntryController {
     @GetMapping("/calendar-entries/by_user/{userId}")
     public List<CalendarEntry> getCalendarEntryByUserId(@PathVariable(value="userId") Long userId) {
         return calendarEntryRepository.findByCreatedByUserId(userId);
+    }
+
+    @PostMapping("/calendar-entries")
+    public CalendarEntry create(@RequestBody CalendarEntry calendarEntry) {
+        return calendarEntryRepository.save(calendarEntry);
+    }
+
+    @PutMapping("/calendar-entries")
+    public CalendarEntry update(@RequestBody CalendarEntry calendarEntry){
+        return calendarEntryRepository.save(calendarEntry);
+    }
+
+    @DeleteMapping("/calendar-entries/{id}")
+    public void deleteById(@PathVariable(value="id") Long id){
+        calendarEntryRepository.deleteById(id);
     }
 }

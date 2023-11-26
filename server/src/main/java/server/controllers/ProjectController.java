@@ -1,10 +1,7 @@
 package server.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import server.models.Project;
 import server.models.CalendarEntry;
 import server.repository.ProjectRepository;
@@ -43,5 +40,20 @@ public class ProjectController {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    @PostMapping("/projects")
+    public Project create(@RequestBody Project project) {
+        return projectRepository.save(project);
+    }
+
+    @PutMapping("/projects")
+    public Project update(@RequestBody Project project){
+        return projectRepository.save(project);
+    }
+
+    @DeleteMapping("/projects/{id}")
+    public void deleteById(@PathVariable(value="id") Long id){
+        projectRepository.deleteById(id);
     }
 }

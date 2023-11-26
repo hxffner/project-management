@@ -22,4 +22,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Query("SELECT ce FROM CalendarEntry ce WHERE ce.project.id = ?1")
     List<CalendarEntry> getCalendarEntries(Long id);
+
+    // Project save(Project project);
+
+    void deleteById(Long id);
 }
