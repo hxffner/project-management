@@ -2,6 +2,7 @@ import { FC, useRef, FormEvent } from "react";
 import { useAppDispatch } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { register } from "../../features/auth/authSlice";
+import { toast } from "react-toastify";
 
 const RegisterPage: FC = () => {
   const dispatch = useAppDispatch();
@@ -25,10 +26,12 @@ const RegisterPage: FC = () => {
       !passwordValue ||
       !confirmPasswordValue
     ) {
+      toast.error("Fill in every credential!");
       return;
     }
 
     if (passwordValue !== confirmPasswordValue) {
+      toast.error("Passwords don't match!");
       return;
     }
 
@@ -40,8 +43,10 @@ const RegisterPage: FC = () => {
           password: passwordValue,
         })
       );
+      toast.success("Registration successful");
       navigate("/login");
     } catch (error) {
+      toast.error("Wrong credentials!");
       console.error("Registration failed:", error);
     }
   };

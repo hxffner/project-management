@@ -2,6 +2,7 @@ import { FC, FormEvent, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../features/auth/authSlice";
 import { useAppDispatch } from "../../app/hooks";
+import { toast } from "react-toastify";
 
 const LoginPage: FC = () => {
   const dispatch = useAppDispatch();
@@ -17,13 +18,18 @@ const LoginPage: FC = () => {
     const passwordValue = password.current?.value;
 
     if (!usernameValue || !passwordValue) {
+      toast.error("Fill in every credential!");
       return;
     }
 
     try {
-      await dispatch(login({ username: usernameValue, password: passwordValue }));
-      navigate('/'); 
+      await dispatch(
+        login({ username: usernameValue, password: passwordValue })
+      );
+      toast.success("Login successful");
+      navigate("/");
     } catch (error) {
+      toast.error("Wrong credentials!");
       console.error("Login failed:", error);
     }
   };

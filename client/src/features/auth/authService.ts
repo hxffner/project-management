@@ -27,10 +27,7 @@ export const authService = {
     return response.json();
   },
 
-  login: async (
-    username: string,
-    password: string
-  ): Promise<AuthResponse> => {
+  login: async (username: string, password: string): Promise<AuthResponse> => {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
       headers: {
@@ -52,4 +49,3 @@ export const authService = {
     return Promise.resolve();
   },
 };
-

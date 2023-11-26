@@ -1,4 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import Sidebar from "./components/Sidebar";
 import Content from "./components/Content";
 import RegisterPage from "./pages/Auth/RegisterPage";
@@ -20,6 +23,7 @@ function App() {
             <Route path={`/profile/:username`} element={<ProfilePage />} />
             <Route path={`/profile/:username/settings`} element={<Settings />} />
           </Routes>
+          <ToastContainer />
         </Content>
       </BrowserRouter>
     </>

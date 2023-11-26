@@ -1,5 +1,3 @@
-// authSlice.ts
-
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { authService } from "./authService";
 import { RootState } from "../../app/store";
@@ -11,33 +9,27 @@ interface AuthState {
   error: string | null;
 }
 
-const user = JSON.parse(localStorage.getItem("user") as string);
-const token = localStorage.getItem("token");
-
 const initialState: AuthState = {
-  user: user || null,
-  jwtToken: token || null,
+  user: null,
+  jwtToken: null,
   status: "idle",
   error: null,
 };
 
-export const login = createAsyncThunk(
-  "auth/login",
-  async (credentials: { username: string; password: string }) => {
-    const response = await authService.login(
-      credentials.username,
-      credentials.password
-    );
+let storedUser = null;
 
-    const { jwtToken, username, email } = response;
+try {
+  storedUser = JSON.parse(localStorage.getItem("user") as string);
+} catch (error) {
+  console.error("Error parsing stored user:", error);
+}
 
-    // Store user details in localStorage
-    localStorage.setItem("token", jwtToken);
-    localStorage.setItem("user", JSON.stringify({ username, email }));
+const storedToken = localStorage.getItem("token");
 
-    return { user: { username, email }, jwtToken };
-  }
-);
+if (storedUser && storedToken) {
+  initialState.user = storedUser;
+  initialState.jwtToken = storedToken;
+}
 
 export const register = createAsyncThunk(
   "auth/register",
@@ -53,21 +45,37 @@ export const register = createAsyncThunk(
     );
 
     const { jwtToken, username, email } = response;
-
-    localStorage.setItem("token", jwtToken);
-    localStorage.setItem("user", JSON.stringify({ username, email }));
-
     return { user: { username, email }, jwtToken };
   }
 );
 
-export const logout = createAsyncThunk("auth/logout", async () => {
-  // Add logic for logging out on the server if necessary
+export const login = createAsyncThunk(
+  "auth/login",
+  async (
+    credentials: { username: string; password: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await authService.login(
+        credentials.username,
+        credentials.password
+      );
 
-  // Remove user details from localStorage
+      const { jwtToken, username, email } = response;
+
+      localStorage.setItem("token", jwtToken);
+      localStorage.setItem("user", JSON.stringify({ username, email }));
+
+      return { user: { username, email }, jwtToken };
+    } catch (error) {
+      return rejectWithValue("Login failed");
+    }
+  }
+);
+
+export const logout = createAsyncThunk("auth/logout", async () => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
-
   return { user: null, jwtToken: null };
 });
 
@@ -82,7 +90,13 @@ const authSlice = createSlice({
       })
       .addCase(
         login.fulfilled,
-        (state, action: PayloadAction<{ user: { username: string; email: string }; jwtToken: string }>) => {
+        (
+          state,
+          action: PayloadAction<{
+            user: { username: string; email: string };
+            jwtToken: string;
+          }>
+        ) => {
           state.status = "succeeded";
           state.user = action.payload.user;
           state.jwtToken = action.payload.jwtToken;
@@ -97,7 +111,13 @@ const authSlice = createSlice({
       })
       .addCase(
         register.fulfilled,
-        (state, action: PayloadAction<{ user: { username: string; email: string }; jwtToken: string }>) => {
+        (
+          state,
+          action: PayloadAction<{
+            user: { username: string; email: string };
+            jwtToken: string;
+          }>
+        ) => {
           state.status = "succeeded";
           state.user = action.payload.user;
           state.jwtToken = action.payload.jwtToken;
