@@ -3,6 +3,7 @@ package server.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import server.models.CalendarEntry;
+import server.models.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,4 +20,8 @@ public interface CalendarEntryRepository extends JpaRepository<CalendarEntry, Lo
 
     @Override
     List<CalendarEntry> findAll();
+
+    // CalendarEntry save(CalendarEntry calendarEntry);
+
+    void deleteById(Long id);
 }
