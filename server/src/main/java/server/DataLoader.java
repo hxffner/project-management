@@ -24,7 +24,7 @@ public class DataLoader implements ApplicationRunner {
     @Autowired
     PasswordEncoder passwordEncoder;
     public void run(ApplicationArguments args) {
-        User userToSave = new User("user1", "firstName1", "lastName1", "user1@mail.com", passwordEncoder.encode("pwd1"), "avatarPath1");
+        User userToSave = new User("user1", "user1@mail.com", passwordEncoder.encode("pwd1"));
         //userToSave.setRoles(Stream.of(new Role(RoleEnum.ROLE_USER)).collect(Collectors.toSet()));
         userRepository.save(userToSave);
     }
