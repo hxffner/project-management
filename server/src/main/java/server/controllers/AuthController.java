@@ -39,7 +39,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String jwt = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getUser().getEmail()));
+        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getUser().getEmail(), userDetails.getUser().getAvatarPath()));
     }
 
     @PostMapping("/signup")
@@ -52,7 +52,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: email already in use"));
         }
 
-        User user = new User(signupRequest.getUsername(), signupRequest.getEmail(), passwordEncoder.encode(signupRequest.getPassword()));
+        User user = new User(signupRequest.getUsername(), signupRequest.getFirstName(), signupRequest.getLastName(), signupRequest.getEmail(), passwordEncoder.encode(signupRequest.getPassword()), signupRequest.getAvatarPath());
 
         userRepository.save(user);
 

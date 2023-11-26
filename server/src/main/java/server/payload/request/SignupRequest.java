@@ -6,6 +6,13 @@ import jakarta.validation.constraints.NotBlank;
 public class SignupRequest {
     @NotBlank
     private String username;
+
+    @NotBlank
+    private String firstName;
+
+    @NotBlank
+    private String lastName;
+
     @Email
     @NotBlank
     private String email;
@@ -13,13 +20,19 @@ public class SignupRequest {
     @NotBlank
     private String password;
 
+    @NotBlank
+    private String avatarPath;
+
     public SignupRequest() {
     }
 
-    public SignupRequest(String username, String email, String password) {
+    public SignupRequest(String username, String firstName, String lastName, String email, String password, String avatarPath) {
         this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.avatarPath = avatarPath;
     }
 
     public String getUsername() {
@@ -28,6 +41,22 @@ public class SignupRequest {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -46,12 +75,24 @@ public class SignupRequest {
         this.password = password;
     }
 
+
+    public String getAvatarPath() {
+        return avatarPath;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
+    }
+
     @Override
     public String toString() {
         return "SignupRequest{" +
                 "username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", avatarPath='" + avatarPath + '\'' +
                 '}';
     }
 }

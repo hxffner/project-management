@@ -21,6 +21,14 @@ public class User {
     private String username;
 
     @NotBlank
+    @Column(name = "first_name")
+    private String firstName;
+
+    @NotBlank
+    @Column(name = "last_name")
+    private String lastName;
+
+    @NotBlank
     @Email
     @Column(name = "email")
     private String email;
@@ -29,16 +37,23 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @NotBlank
+    @Column(name = "avatar_path")
+    private String avatarPath;
+
     /*@ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();*/
 
     public User() {}
 
-    public User(String username, String email, String password) {
+    public User(String username, String firstName, String lastName, String email, String password, String avatarPath) {
         this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.avatarPath = avatarPath;
     }
 
     public Long getId() {
@@ -57,6 +72,22 @@ public class User {
         this.username = username;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -73,6 +104,14 @@ public class User {
         this.password = password;
     }
 
+    public String getAvatarPath() {
+        return avatarPath;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
+    }
+
     /*public Set<Role> getRoles() {
         return roles;
     }
@@ -86,8 +125,11 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", avatarPath='" + avatarPath + '\'' +
                 '}';
     }
 
@@ -96,6 +138,17 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id);
+        return Objects.equals(id, user.id) &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(firstName, user.firstName) &&
+                Objects.equals(lastName, user.lastName) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(avatarPath, user.avatarPath);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, firstName, lastName, email, password, avatarPath);
     }
 }
