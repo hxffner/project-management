@@ -4,14 +4,16 @@ public class JwtResponse {
     private String jwtToken;
     private String username;
     private String email;
+    private String avatarPath;
 
     public JwtResponse() {
     }
 
-    public JwtResponse(String jwtToken, String username, String email) {
+    public JwtResponse(String jwtToken, String username, String email, String avatarPath) {
         this.jwtToken = jwtToken;
         this.username = username;
         this.email = email;
+        this.avatarPath = avatarPath;
     }
 
     public String getJwtToken() {
@@ -38,12 +40,22 @@ public class JwtResponse {
         this.email = email;
     }
 
+    public String getAvatarPath() {
+        return avatarPath;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
+    }
+
     @Override
     public String toString() {
         return "JwtResponse{" +
                 "jwtToken='" + jwtToken + '\'' +
+                "user: {" +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
-                '}';
+                ", avatarPath='" + avatarPath + '\'' +
+                "}}";
     }
 }

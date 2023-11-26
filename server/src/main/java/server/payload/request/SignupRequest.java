@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 public class SignupRequest {
     @NotBlank
     private String username;
+
     @Email
     @NotBlank
     private String email;
