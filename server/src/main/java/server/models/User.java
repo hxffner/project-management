@@ -42,7 +42,7 @@ public class User {
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name = "created_at")
-    private Date createdAt;
+    private Date createdAt = new Date(System.currentTimeMillis());
 
     /*@ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
