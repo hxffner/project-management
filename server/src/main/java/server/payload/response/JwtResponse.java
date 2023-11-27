@@ -1,19 +1,25 @@
 package server.payload.response;
 
+import java.util.Date;
+
 public class JwtResponse {
     private String jwtToken;
     private String username;
     private String email;
     private String avatarPath;
 
+    private Date createdAt;
+
     public JwtResponse() {
     }
 
-    public JwtResponse(String jwtToken, String username, String email, String avatarPath) {
+    public JwtResponse(String jwtToken, String username, String email, String avatarPath, Date createdAt) {
         this.jwtToken = jwtToken;
         this.username = username;
         this.email = email;
         this.avatarPath = avatarPath;
+        this.createdAt = createdAt;
+
     }
 
     public String getJwtToken() {
@@ -48,6 +54,14 @@ public class JwtResponse {
         this.avatarPath = avatarPath;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
         return "JwtResponse{" +
@@ -56,6 +70,7 @@ public class JwtResponse {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", avatarPath='" + avatarPath + '\'' +
+                ", createdAt='" + createdAt + '\'' +
                 "}}";
     }
 }
