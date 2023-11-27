@@ -1,9 +1,11 @@
 package server.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -37,6 +39,10 @@ public class User {
 
     @Column(name = "avatar_path")
     private String avatarPath;
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "created_at")
+    private Date createdAt;
 
     /*@ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -106,6 +112,14 @@ public class User {
         this.avatarPath = avatarPath;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
     /*public Set<Role> getRoles() {
         return roles;
     }
@@ -124,6 +138,7 @@ public class User {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", avatarPath='" + avatarPath + '\'' +
+                ", createdAt=" + createdAt +
                 '}';
     }
 
@@ -138,11 +153,12 @@ public class User {
                 Objects.equals(password, user.password) &&
                 Objects.equals(firstName, user.firstName) &&
                 Objects.equals(lastName, user.lastName) &&
-                Objects.equals(avatarPath, user.avatarPath);
+                Objects.equals(avatarPath, user.avatarPath) &&
+                Objects.equals(createdAt, user.createdAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, email, password, avatarPath, firstName, lastName);
+        return Objects.hash(id, username, email, password, firstName, lastName, avatarPath, createdAt);
     }
 }
