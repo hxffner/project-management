@@ -3,7 +3,12 @@ import { authService } from "./authService";
 import { RootState } from "../../app/store";
 
 interface AuthState {
-  user: null | { username: string; email: string };
+  user: null | {
+    username: string;
+    email: string;
+    avatarPath: string;
+    createdAt: string;
+  };
   jwtToken: null | string;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
@@ -16,18 +21,11 @@ const initialState: AuthState = {
   error: null,
 };
 
-let storedUser = null;
-
-try {
-  storedUser = JSON.parse(localStorage.getItem("user") as string);
-} catch (error) {
-  console.error("Error parsing stored user:", error);
-}
-
+const storedUser = localStorage.getItem("user");
 const storedToken = localStorage.getItem("token");
 
 if (storedUser && storedToken) {
-  initialState.user = storedUser;
+  initialState.user = JSON.parse(storedUser);
   initialState.jwtToken = storedToken;
 }
 
@@ -44,8 +42,7 @@ export const register = createAsyncThunk(
       credentials.password
     );
 
-    const { jwtToken, username, email } = response;
-    return { user: { username, email }, jwtToken };
+    return response;
   }
 );
 
@@ -61,12 +58,15 @@ export const login = createAsyncThunk(
         credentials.password
       );
 
-      const { jwtToken, username, email } = response;
+      const { jwtToken, username, email, avatarPath, createdAt } = response;
 
       localStorage.setItem("token", jwtToken);
-      localStorage.setItem("user", JSON.stringify({ username, email }));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ username, email, avatarPath, createdAt })
+      );
 
-      return { user: { username, email }, jwtToken };
+      return { user: { username, email, avatarPath, createdAt }, jwtToken };
     } catch (error) {
       return rejectWithValue("Login failed");
     }
@@ -93,12 +93,22 @@ const authSlice = createSlice({
         (
           state,
           action: PayloadAction<{
-            user: { username: string; email: string };
+            user: {
+              username: string;
+              email: string;
+              avatarPath: string | null | undefined;
+              createdAt: string | undefined;
+            };
             jwtToken: string;
           }>
         ) => {
           state.status = "succeeded";
-          state.user = action.payload.user;
+          state.user = {
+            username: action.payload.user.username,
+            email: action.payload.user.email,
+            avatarPath: action.payload.user.avatarPath || "",
+            createdAt: action.payload.user.createdAt || "",
+          };
           state.jwtToken = action.payload.jwtToken;
         }
       )
@@ -109,20 +119,9 @@ const authSlice = createSlice({
       .addCase(register.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(
-        register.fulfilled,
-        (
-          state,
-          action: PayloadAction<{
-            user: { username: string; email: string };
-            jwtToken: string;
-          }>
-        ) => {
-          state.status = "succeeded";
-          state.user = action.payload.user;
-          state.jwtToken = action.payload.jwtToken;
-        }
-      )
+      .addCase(register.fulfilled, (state) => {
+        state.status = "succeeded";
+      })
       .addCase(register.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message || "Registration failed";

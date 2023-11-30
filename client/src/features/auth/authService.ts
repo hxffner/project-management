@@ -4,6 +4,8 @@ export interface AuthResponse {
   jwtToken: string;
   username: string;
   email: string;
+  avatarPath?: string | null;
+  createdAt?: string;
 }
 
 export const authService = {

@@ -5,8 +5,8 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { logout, selectUser } from "../features/auth/authSlice";
 
 const Sidebar: FC = () => {
-  const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);  
 
   return (
     <aside className="fixed top-0 left-0 h-full w-72 p-3 bg-base-300 flex flex-col">
@@ -144,7 +144,7 @@ const Sidebar: FC = () => {
             <div className="w-20 rounded">
               <img src="https://e3.365dm.com/18/03/736x414/skynews-tony-soprano-james-gandolfini_4253599.jpg?20190110140558" />
             </div>
-            <h2 className="ml-4 text-lg font-semibold">Tony Soprano</h2>
+            <h2 className="ml-4 text-lg font-semibold">{user.username}</h2>
           </div>
         </div>
       ) : (
