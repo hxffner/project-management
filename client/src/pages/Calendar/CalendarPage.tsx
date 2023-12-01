@@ -69,7 +69,7 @@ const CalendarPage: FC = () => {
               className="join-item btn btn-ghost normal-case text-xl"
               onClick={() => {
                 (
-                  document!.getElementById("my_modal_2") as HTMLFormElement
+                  document!.getElementById("my_modal_3") as HTMLFormElement
                 ).showModal();
               }}
             >
