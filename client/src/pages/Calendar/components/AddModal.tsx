@@ -1,39 +1,96 @@
-import React, { FC, useState } from "react";
+import { FC, useRef, FormEvent } from "react";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { toast } from "react-toastify";
+import { createEvent } from "../../../features/event/eventSlice";
+import { selectToken } from "../../../features/auth/authSlice";
 import dayjs from "dayjs";
 
 const AddModal: FC = () => {
-  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const token = useAppSelector(selectToken);
+  const dispatch = useAppDispatch();
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = dayjs(e.target.value);
-    setSelectedDate(newDate);
+  const name = useRef<HTMLInputElement | null>(null);
+  const desc = useRef<HTMLInputElement | null>(null);
+  const startDate = useRef<HTMLInputElement | null>(null);
+  const endDate = useRef<HTMLInputElement | null>(null);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    const nameValue = name.current?.value;
+    const descValue = desc.current?.value;
+    const startDateValue = startDate.current?.value;
+    const endDateValue = endDate.current?.value;
+
+    if (!nameValue || !descValue || !startDate || !endDate) {
+      toast.error("Fill in every detail!");
+      return;
+    }
+
+    const startDateObject = dayjs(startDateValue).format("YYYY-MM-DD HH:mm:ss");
+    const endDateObject = dayjs(endDateValue).format("YYYY-MM-DD HH:mm:ss");
+
+    console.log(startDateObject);
+    console.log(endDateObject);
+    console.log(token);
+
+    try {
+      await dispatch(
+        createEvent({
+          name: nameValue,
+          description: descValue,
+          startDate: startDateObject,
+          endDate: endDateObject,
+          token: token!,
+        })
+      );
+      toast.success("Event creation successful!");
+    } catch (error) {
+      toast.error("Wrong details!");
+      console.error("Event failed:", error);
+    }
   };
 
   return (
-    <dialog id="my_modal_2" className="modal">
-      <div className="modal-box flex flex-col gap-6 items-center">
-        <input
-          type="text"
-          placeholder="Name"
-          className="input input-bordered w-full max-w-xs"
-        />
-        <input
-          type="text"
-          placeholder="Desc"
-          className="input input-bordered w-full max-w-xs"
-        />
-        
-        <h3 className="font-bold text-lg">Date</h3>
-        <input
-          type="date"
-          value={selectedDate.format("YYYY-MM-DD")}
-          onChange={handleDateChange}
-        />
-        <button type="button" className="btn">Save</button>
+    <dialog id="my_modal_3" className="modal">
+      <div className="modal-box">
+        <form method="dialog">
+          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            ✕
+          </button>
+        </form>
+        <form onSubmit={handleSubmit}>
+          <div className="flex flex-col gap-6 items-center">
+            <h1 className="font-bold text-xl">Create Event Form</h1>
+            <input
+              type="text"
+              placeholder="Name"
+              className="input input-bordered w-full max-w-xs"
+              ref={name}
+            />
+            <input
+              type="text"
+              placeholder="Desc"
+              className="input input-bordered w-full max-w-xs"
+              ref={desc}
+            />
+            <div className="flex gap-8">
+              <div>
+                <h1 className="font-bold text-lg">Start Date</h1>
+                <input type="date" ref={startDate} />
+              </div>
+              <div>
+                <h1 className="font-bold text-lg">End Date</h1>
+                <input type="date" ref={endDate} />
+              </div>
+            </div>
+
+            <button type="submit" className="btn btn-block max-w-xs">
+              Create Event
+            </button>
+          </div>
+        </form>
       </div>
-      <form method="dialog" className="modal-backdrop">
-        <button>close</button>
-      </form>
     </dialog>
   );
 };
