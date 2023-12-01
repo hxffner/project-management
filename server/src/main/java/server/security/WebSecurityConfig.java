@@ -52,6 +52,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/**").authenticated()
                                 .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/images/**").permitAll()
                                 .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthEntryPoint))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
