@@ -13,6 +13,8 @@ export const eventService = {
   createEvent: async (
     name: string,
     description: string,
+    startDate: Date,
+    endDate: Date,
     token: string
   ): Promise<EventResponse> => {
     const response = await fetch(`${API_BASE_URL}/api/calendar-entries`, {
@@ -21,15 +23,12 @@ export const eventService = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ name, description }),
+      body: JSON.stringify({ name, description, startDate, endDate }),
     });
 
     if (!response.ok) {
       throw new Error("Event creation failed");
     }
-    console.log(token);
-    
-
     return response.json();
   },
 };
