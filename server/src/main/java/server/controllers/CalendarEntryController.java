@@ -3,6 +3,8 @@ package server.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import server.models.CalendarEntry;
+import server.models.Event;
+import server.models.Task;
 import server.repository.CalendarEntryRepository;
 
 import java.util.List;
@@ -30,17 +32,27 @@ public class CalendarEntryController {
         return calendarEntryRepository.findByCreatedByUserId(userId);
     }
 
-    @PostMapping("/calendar-entries")
-    public CalendarEntry create(@RequestBody CalendarEntry calendarEntry) {
-        return calendarEntryRepository.save(calendarEntry);
+    @PostMapping("/event/create")
+    public Event create(@RequestBody Event event) {
+        return calendarEntryRepository.save(event);
     }
 
-    @PutMapping("/calendar-entries")
-    public CalendarEntry update(@RequestBody CalendarEntry calendarEntry){
-        return calendarEntryRepository.save(calendarEntry);
+    @PostMapping("/task/create")
+    public Task create(@RequestBody Task task) {
+        return calendarEntryRepository.save(task);
     }
 
-    @DeleteMapping("/calendar-entries/{id}")
+    @PutMapping("/event/update")
+    public Event update(@RequestBody Event event){
+        return calendarEntryRepository.save(event);
+    }
+
+    @PutMapping("/task/update")
+    public Task update(@RequestBody Task task){
+        return calendarEntryRepository.save(task);
+    }
+
+    @DeleteMapping({"/event/delete/{id}", "/task/delete/{id}"})
     public void deleteById(@PathVariable(value="id") Long id){
         calendarEntryRepository.deleteById(id);
     }
