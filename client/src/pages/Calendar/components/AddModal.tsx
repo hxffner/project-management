@@ -27,22 +27,20 @@ const AddModal: FC = () => {
       return;
     }
 
-    const startDateObject = startDateValue ? dayjs(startDateValue) : dayjs();
-    const endDateObject = endDateValue ? dayjs(endDateValue) : dayjs();
+    const startDateObject = dayjs(startDateValue).format("YYYY-MM-DD HH:mm:ss");
+    const endDateObject = dayjs(endDateValue).format("YYYY-MM-DD HH:mm:ss");
 
-    const formattedStartDate = startDateObject.format("YYYY-MM-DD HH:mm:ss");
-    const formattedEndDate = endDateObject.format("YYYY-MM-DD HH:mm:ss");
-
-    console.log(formattedStartDate);
-    console.log(formattedEndDate);
+    console.log(startDateObject);
+    console.log(endDateObject);
+    console.log(token);
 
     try {
       await dispatch(
         createEvent({
           name: nameValue,
           description: descValue,
-          startDate: formattedStartDate,
-          endDate: formattedEndDate,
+          startDate: startDateObject,
+          endDate: endDateObject,
           token: token!,
         })
       );

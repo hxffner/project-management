@@ -5,16 +5,16 @@ export interface EventResponse {
   project: string;
   name: string;
   description: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
 }
 
 export const eventService = {
   createEvent: async (
     name: string,
     description: string,
-    startDate: Date,
-    endDate: Date,
+    startDate: string,
+    endDate: string,
     token: string
   ): Promise<EventResponse> => {
     const response = await fetch(`${API_BASE_URL}/api/calendar-entries`, {

@@ -5,8 +5,8 @@ interface EventState {
   event: null | {
     name: string;
     description: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
   };
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
@@ -23,8 +23,8 @@ export const createEvent = createAsyncThunk(
   async (details: {
     name: string;
     description: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
     token: string;
   }): Promise<EventResponse> => {
     const response = await eventService.createEvent(
