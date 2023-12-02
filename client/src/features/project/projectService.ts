@@ -1,29 +1,31 @@
 const API_BASE_URL = "http://localhost:8080";
 
-export interface EventResponse {
+export interface ProjectResponse {
   id: string;
-  project: string;
   name: string;
   description: string;
+  // relatedTasks: Task[];
+  // projectMembers: string;
   startDate: string;
   endDate: string;
+  dueDate: string;
 }
 
-export const eventService = {
-  createEvent: async (
+export const projectService = {
+  createProject: async (
     name: string,
     description: string,
-    startDate: string,
-    endDate: string,
+    // startDate: string,
+    // endDate: string,
     token: string
-  ): Promise<EventResponse> => {
-    const response = await fetch(`${API_BASE_URL}/api/event/create`, {
+  ): Promise<ProjectResponse> => {
+    const response = await fetch(`${API_BASE_URL}/api/projects`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ name, description, startDate, endDate }),
+      body: JSON.stringify({ name, description }),
     });
 
     if (!response.ok) {

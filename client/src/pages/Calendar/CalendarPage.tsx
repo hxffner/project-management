@@ -58,7 +58,7 @@ const CalendarPage: FC = () => {
               }}
             >
               <option value={`day`}>Day View</option>
-              <option selected value={`week`}>
+              <option value={`week`}>
                 Week View
               </option>
               <option value={`month`}>Month View</option>
@@ -69,7 +69,7 @@ const CalendarPage: FC = () => {
               className="join-item btn btn-ghost normal-case text-xl"
               onClick={() => {
                 (
-                  document!.getElementById("my_modal_3") as HTMLFormElement
+                  document!.getElementById("add_event_modal") as HTMLFormElement
                 ).showModal();
               }}
             >

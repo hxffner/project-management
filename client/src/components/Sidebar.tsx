@@ -42,7 +42,7 @@ const Sidebar: FC = () => {
             </li>
 
             <li className="rounded-sm">
-              <Link to={`/`} className="btn btn-ghost normal-case text-lg">
+              <Link to={`/project`} className="btn btn-ghost normal-case text-lg">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
