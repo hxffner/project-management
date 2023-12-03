@@ -21,7 +21,7 @@ const MonthView: FC<Props> = ({date}) => {
         {month.map((week, weekIndex) => (
           <div key={weekIndex} className="flex w-full">
             {week.map((day, dayIndex) => (
-              <div>
+              <div key={dayIndex}>
                 <div className="flex justify-center ">
                   {weekIndex === 0 && (
                     <p className="text-2xl mt-1">

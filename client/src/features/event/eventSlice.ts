@@ -18,6 +18,27 @@ const initialState: EventState = {
   error: null,
 };
 
+export const createTask = createAsyncThunk(
+  "event/createTask",
+  async (details: {
+    name: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    token: string;
+  }): Promise<EventResponse> => {
+    const response = await eventService.createTask(
+      details.name,
+      details.description,
+      details.startDate,
+      details.endDate,
+      details.token
+    );
+
+    return response;
+  }
+);
+
 export const createEvent = createAsyncThunk(
   "event/createEvent",
   async (details: {
@@ -50,6 +71,25 @@ const eventSlice = createSlice({
       })
       .addCase(
         createEvent.fulfilled,
+        (state, action: PayloadAction<EventResponse>) => {
+          state.status = "succeeded";
+          state.event = {
+            name: action.payload.name,
+            description: action.payload.description,
+            startDate: action.payload.startDate,
+            endDate: action.payload.endDate,
+          };
+        }
+      )
+      .addCase(createTask.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || "Event creation failed";
+      })
+      .addCase(createTask.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(
+        createTask.fulfilled,
         (state, action: PayloadAction<EventResponse>) => {
           state.status = "succeeded";
           state.event = {

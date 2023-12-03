@@ -6,7 +6,7 @@ import {
   selectProjects,
 } from "../../features/project/projectSlice";
 import { selectToken } from "../../features/auth/authSlice";
-import Project from "./components/Project";
+import Project from "./components/ProjectBox";
 
 const ProjectPage: FC = () => {
   const dispatch = useAppDispatch();
