@@ -2,17 +2,19 @@ import { FC, useEffect } from "react";
 import CreateModal from "./components/CreateModal";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-  getProjects, selectProjects,
+  getProjects,
+  selectProjects,
 } from "../../features/project/projectSlice";
 import { selectToken } from "../../features/auth/authSlice";
+import Project from "./components/Project";
 
 const ProjectPage: FC = () => {
   const dispatch = useAppDispatch();
   const projects = useAppSelector(selectProjects);
-    const token = useAppSelector(selectToken);
+  const token = useAppSelector(selectToken);
 
   console.log(projects);
-  
+
   useEffect(() => {
     if (token !== null) {
       dispatch(getProjects(token));
@@ -44,7 +46,10 @@ const ProjectPage: FC = () => {
           </div>
         </div>
       </div>
-      ViewComponent
+      <div className="grid grid-cols-3 gap-4 m-8">
+        {projects &&
+          projects.map((project, i) => <Project key={i} project={project} />)}
+      </div>
     </div>
   );
 };
