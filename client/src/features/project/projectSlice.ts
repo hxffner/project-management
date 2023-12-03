@@ -1,22 +1,42 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ProjectResponse, projectService } from "./projectService";
+import { RootState } from "../../app/store";
 
 interface ProjectState {
-  project: null | {
+  projects: null | {
+    id: string;
     name: string;
     description: string;
-    // startDate: string;
-    // endDate: string;
-  };
+    relatedTasks: string[];
+    projectMembers: string;
+    startDate: string;
+    endDate: string;
+    dueDate: string;
+  }[];
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }
 
 const initialState: ProjectState = {
-  project: null,
+  projects: [],
   status: "idle",
   error: null,
 };
+
+export const getProjects = createAsyncThunk(
+  'project/getProjects',
+  async (token: string): Promise<ProjectResponse[]> => {
+    try {
+      const response = await projectService.getProjects(token);
+      return response;
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+      throw error;
+    }
+  }
+);
+
+
 
 export const createProject = createAsyncThunk(
   "project/createProject",
@@ -28,8 +48,6 @@ export const createProject = createAsyncThunk(
     const response = await projectService.createProject(
       details.name,
       details.description,
-      // details.startDate,
-      // details.endDate,
       details.token
     );
 
@@ -43,6 +61,21 @@ const projectSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(getProjects.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(
+        getProjects.fulfilled,
+        (state, action: PayloadAction<ProjectResponse[]>) => {
+          state.status = 'succeeded';
+          state.projects = action.payload;
+        }
+      )
+      
+      .addCase(getProjects.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || "Failed to fetch projects";
+      })
       .addCase(createProject.pending, (state) => {
         state.status = "loading";
       })
@@ -50,12 +83,7 @@ const projectSlice = createSlice({
         createProject.fulfilled,
         (state, action: PayloadAction<ProjectResponse>) => {
           state.status = "succeeded";
-          state.project = {
-            name: action.payload.name,
-            description: action.payload.description,
-            // startDate: action.payload.startDate,
-            // endDate: action.payload.endDate,
-          };
+          state.projects = state.projects ? [...state.projects, action.payload] : [action.payload];
         }
       )
       .addCase(createProject.rejected, (state, action) => {
@@ -64,5 +92,7 @@ const projectSlice = createSlice({
       });
   },
 });
+
+export const selectProjects = (state: RootState) => state.project.projects;
 
 export default projectSlice.reducer;
