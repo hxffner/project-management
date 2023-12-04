@@ -6,9 +6,11 @@ interface Props {
   date: Dayjs;
 }
 
-const MonthView: FC<Props> = ({date}) => {
-  const [month, setMonth] = useState<Dayjs[][]>(getMonth(date.year(), date.month()));
-  
+const MonthView: FC<Props> = ({ date }) => {
+  const [month, setMonth] = useState<Dayjs[][]>(
+    getMonth(date.year(), date.month())
+  );
+
   useEffect(() => {
     setMonth(getMonth(date.year(), date.month()));
   }, [date]);
@@ -32,7 +34,9 @@ const MonthView: FC<Props> = ({date}) => {
 
                 <div
                   key={dayIndex}
-                  className={`flex items-start justify-start w-1/7 p-4 border ${isSameDay(day, today) ? "border-white" : "border-base-200"} w-52 h-24`}
+                  className={`flex items-start justify-start w-1/7 p-4 border ${
+                    isSameDay(day, today) ? "border-white" : "border-base-200"
+                  } w-52 h-24`}
                 >
                   {day ? day.date() : ""}
                 </div>

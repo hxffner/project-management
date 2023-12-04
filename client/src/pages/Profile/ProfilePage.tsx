@@ -14,7 +14,7 @@ const ProfilePage: FC = () => {
         </div>
       </div>
       <h2 className="ml-4 text-lg font-semibold">{user?.username}</h2>
-      <p>User since {dayjs(user?.createdAt).format('MMMM YYYY')}</p>
+      <p>User since {dayjs(user?.createdAt).format("MMMM YYYY")}</p>
     </div>
   );
 };

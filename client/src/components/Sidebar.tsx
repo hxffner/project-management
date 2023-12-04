@@ -6,7 +6,7 @@ import { logout, selectUser } from "../features/auth/authSlice";
 
 const Sidebar: FC = () => {
   const dispatch = useAppDispatch();
-  const user = useAppSelector(selectUser);  
+  const user = useAppSelector(selectUser);
 
   return (
     <aside className="fixed top-0 left-0 h-full w-72 p-3 bg-base-300 flex flex-col">
@@ -42,7 +42,10 @@ const Sidebar: FC = () => {
             </li>
 
             <li className="rounded-sm">
-              <Link to={`/project`} className="btn btn-ghost normal-case text-lg">
+              <Link
+                to={`/project`}
+                className="btn btn-ghost normal-case text-lg"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -120,7 +123,11 @@ const Sidebar: FC = () => {
                 </Link>
               </li>
               <li className="rounded-sm">
-                <Link to={`/`} className="btn btn-ghost normal-case text-lg" onClick={() => dispatch(logout())}>
+                <Link
+                  to={`/`}
+                  className="btn btn-ghost normal-case text-lg"
+                  onClick={() => dispatch(logout())}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
