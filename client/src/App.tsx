@@ -9,6 +9,9 @@ import LoginPage from "./pages/Auth/LoginPage";
 import CalendarPage from "./pages/Calendar/CalendarPage";
 import ProfilePage from "./pages/Profile/ProfilePage";
 import Settings from "./pages/Profile/Settings";
+import HomePage from "./pages/Home/HomePage";
+import ProjectPage from "./pages/Project/ProjectPage";
+import ProjectDetailPage from "./pages/Project/ProjectDetailPage";
 
 function App() {
   return (
@@ -17,7 +20,10 @@ function App() {
         <Sidebar />
         <Content>
           <Routes>
+            <Route path={`/`} element={<HomePage />} />
             <Route path={`/calendar`} element={<CalendarPage />} />
+            <Route path={`/project`} element={<ProjectPage />} />
+            <Route path={`/project/:projectId`} element={<ProjectDetailPage />} />
             <Route path={`/login`} element={<LoginPage />} />
             <Route path={`/register`} element={<RegisterPage />} />
             <Route path={`/profile/:username`} element={<ProfilePage />} />

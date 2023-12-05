@@ -27,12 +27,8 @@ const AddModal: FC = () => {
       return;
     }
 
-    const startDateObject = dayjs(startDateValue).format("YYYY-MM-DD HH:mm:ss");
-    const endDateObject = dayjs(endDateValue).format("YYYY-MM-DD HH:mm:ss");
-
-    console.log(startDateObject);
-    console.log(endDateObject);
-    console.log(token);
+    const startDateObject = dayjs(startDateValue).format("YYYY-MM-DD");
+    const endDateObject = dayjs(endDateValue).format("YYYY-MM-DD");
 
     try {
       await dispatch(
@@ -52,7 +48,7 @@ const AddModal: FC = () => {
   };
 
   return (
-    <dialog id="my_modal_3" className="modal">
+    <dialog id="add_event_modal" className="modal">
       <div className="modal-box">
         <form method="dialog">
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">

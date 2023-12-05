@@ -10,14 +10,14 @@ export interface EventResponse {
 }
 
 export const eventService = {
-  createEvent: async (
+  createTask: async (
     name: string,
     description: string,
     startDate: string,
     endDate: string,
     token: string
   ): Promise<EventResponse> => {
-    const response = await fetch(`${API_BASE_URL}/api/calendar-entries`, {
+    const response = await fetch(`${API_BASE_URL}/api/task/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,6 +29,30 @@ export const eventService = {
     if (!response.ok) {
       throw new Error("Event creation failed");
     }
+
+    return response.json();
+  },
+
+  createEvent: async (
+    name: string,
+    description: string,
+    startDate: string,
+    endDate: string,
+    token: string
+  ): Promise<EventResponse> => {
+    const response = await fetch(`${API_BASE_URL}/api/event/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ name, description, startDate, endDate }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Event creation failed");
+    }
+
     return response.json();
   },
 };
