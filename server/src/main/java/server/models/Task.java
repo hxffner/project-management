@@ -21,6 +21,9 @@ public class Task extends CalendarEntry {
         this.status = StatusEnum.IN_QUEUE;
     }
 
+    public Task() {
+    }
+
     public Date getDueDate() {
         return dueDate;
     }
