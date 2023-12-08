@@ -25,6 +25,9 @@ public class Event extends CalendarEntry {
         this.attendees = attendees;
     }
 
+    public Event() {
+    }
+
     public List<User> getAttendees() {
         return attendees;
     }
