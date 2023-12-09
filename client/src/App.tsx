@@ -13,9 +13,18 @@ import HomePage from "./pages/Home/HomePage";
 import ProjectPage from "./pages/Project/ProjectPage";
 import ProjectDetailPage from "./pages/Project/ProjectDetailPage";
 
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
+
 function App() {
   return (
     <>
+      <ThemeProvider theme={darkTheme}>
       <BrowserRouter>
         <Sidebar />
         <Content>
@@ -32,6 +41,7 @@ function App() {
           <ToastContainer />
         </Content>
       </BrowserRouter>
+      </ThemeProvider>
     </>
   );
 }
