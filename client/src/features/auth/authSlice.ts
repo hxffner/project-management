@@ -5,6 +5,7 @@ import { RootState } from "../../app/store";
 interface AuthState {
   user: null | {
     username: string;
+    userId: string;
     email: string;
     avatarPath: string;
     createdAt: string;
@@ -58,15 +59,15 @@ export const login = createAsyncThunk(
         credentials.password
       );
 
-      const { jwtToken, username, email, avatarPath, createdAt } = response;
+      const { jwtToken, userId, username, email, avatarPath, createdAt } = response;
 
       localStorage.setItem("token", jwtToken);
       localStorage.setItem(
         "user",
-        JSON.stringify({ username, email, avatarPath, createdAt })
+        JSON.stringify({ userId, username, email, avatarPath, createdAt })
       );
 
-      return { user: { username, email, avatarPath, createdAt }, jwtToken };
+      return { user: { userId, username, email, avatarPath, createdAt }, jwtToken };
     } catch (error) {
       return rejectWithValue("Login failed");
     }
@@ -94,6 +95,7 @@ const authSlice = createSlice({
           state,
           action: PayloadAction<{
             user: {
+              userId: string;
               username: string;
               email: string;
               avatarPath: string | null | undefined;
@@ -104,6 +106,7 @@ const authSlice = createSlice({
         ) => {
           state.status = "succeeded";
           state.user = {
+            userId: action.payload.user.userId,
             username: action.payload.user.username,
             email: action.payload.user.email,
             avatarPath: action.payload.user.avatarPath || "",
