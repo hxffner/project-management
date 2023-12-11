@@ -3,6 +3,8 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectToken } from "../../../features/auth/authSlice";
 import { toast } from "react-toastify";
 import { createProject } from "../../../features/project/projectSlice";
+import { createTask } from "../../../features/event/eventSlice";
+import dayjs from "dayjs";
 
 const CreateTaskModal: FC = () => {
   const token = useAppSelector(selectToken);
@@ -10,30 +12,39 @@ const CreateTaskModal: FC = () => {
 
   const name = useRef<HTMLInputElement | null>(null);
   const desc = useRef<HTMLInputElement | null>(null);
+  const startDate = useRef<HTMLInputElement | null>(null);
+  const endDate = useRef<HTMLInputElement | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     const nameValue = name.current?.value;
     const descValue = desc.current?.value;
+    const startDateValue = startDate.current?.value;
+    const endDateValue = endDate.current?.value;
 
-    if (!nameValue || !descValue) {
+    if (!nameValue || !descValue || !startDate || !endDate) {
       toast.error("Fill in every detail!");
       return;
     }
 
+    const startDateObject = dayjs(startDateValue).format("YYYY-MM-DD HH:mm:ss");
+    const endDateObject = dayjs(endDateValue).format("YYYY-MM-DD HH:mm:ss");
+
     try {
       await dispatch(
-        createProject({
+        createTask({
           name: nameValue,
           description: descValue,
+          startDate: startDateObject,
+          endDate: endDateObject,
           token: token!,
         })
       );
-      toast.success("Task creation successful!");
+      toast.success("Event creation successful!");
     } catch (error) {
       toast.error("Wrong details!");
-      console.error("Task failed:", error);
+      console.error("Event failed:", error);
     }
   };
 
@@ -61,6 +72,17 @@ const CreateTaskModal: FC = () => {
                 className="input input-bordered w-full max-w-xs"
                 ref={desc}
               />
+              <div className="flex gap-8">
+                <div>
+                  <h1 className="font-bold text-lg">Start Date</h1>
+                  <input type="date" ref={startDate} />
+                </div>
+                <div>
+                  <h1 className="font-bold text-lg">End Date</h1>
+                  <input type="date" ref={endDate} />
+                </div>
+              </div>
+
               <button type="submit" className="btn btn-block max-w-xs">
                 Create Task
               </button>
