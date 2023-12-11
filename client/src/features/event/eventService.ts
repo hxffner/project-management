@@ -37,6 +37,40 @@ export const eventService = {
     return response.json();
   },
 
+  updateTask: async (
+    updatedTask: Task,
+    token: string
+  ): Promise<Task> => {
+    const response = await fetch(`${API_BASE_URL}/api/task/update`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updatedTask),
+    });
+
+    if (!response.ok) {
+      throw new Error("Task update failed");
+    }
+
+    return response.json();
+  },
+
+  deleteTaskById: async (taskId: number, token: string): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/api/task/delete/${taskId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Task deletion failed");
+    }
+  },
+
   createEvent: async (
     name: string,
     description: string,

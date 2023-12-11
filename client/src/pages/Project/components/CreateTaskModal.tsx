@@ -46,10 +46,10 @@ const CreateTaskModal: FC<CreateTaskModalProps> = ({ project }) => {
           token: token!,
         })
       );
-      toast.success("Event creation successful!");
+      toast.success("Task creation successful!");
     } catch (error) {
       toast.error("Wrong details!");
-      console.error("Event failed:", error);
+      console.error("Task creation failed:", error);
     }
   };
 

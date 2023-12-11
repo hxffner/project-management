@@ -46,6 +46,21 @@ export const createTask = createAsyncThunk(
   }
 );
 
+export const updateTask = createAsyncThunk(
+  "event/updateTask",
+  async (payload: { task: Task; token: string }): Promise<Task> => {
+    const response = await eventService.updateTask(payload.task, payload.token);
+    return response;
+  }
+);
+
+export const deleteTask = createAsyncThunk(
+  "event/deleteTask",
+  async (payload: { taskId: number; token: string }): Promise<void> => {
+    await eventService.deleteTaskById(payload.taskId, payload.token);
+  }
+);
+
 export const createEvent = createAsyncThunk(
   "event/createEvent",
   async (details: {
@@ -118,6 +133,33 @@ const eventSlice = createSlice({
           };
         }
       )
+      .addCase(updateTask.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateTask.fulfilled, (state, action: PayloadAction<Task>) => {
+        state.status = "succeeded";
+        state.tasks = state.tasks.map((task) =>
+          task.id === action.payload.id ? action.payload : task
+        );
+      })
+      .addCase(updateTask.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || "Task update failed";
+      })
+      .addCase(deleteTask.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.tasks = state.tasks.filter(
+          (task) => task.id !== Number(action.meta.arg.taskId)
+        );
+      
+      })
+      .addCase(deleteTask.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || "Task deletion failed";
+      })
       .addCase(createEvent.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message || "Event creation failed";

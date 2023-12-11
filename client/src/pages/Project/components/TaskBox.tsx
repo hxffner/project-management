@@ -1,12 +1,24 @@
 import { FC } from "react";
 import { Task } from "../../../types/Event";
 import TaskInformationModal from "./TaskInformationModal";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { updateTask } from "../../../features/event/eventSlice";
+import { selectToken } from "../../../features/auth/authSlice";
+import TaskSettingsModal from "./TaskSettingsModal";
 
 type TaskBoxProps = {
   task: Task;
 };
 
 const TaskBox: FC<TaskBoxProps> = ({ task }) => {
+  const dispatch = useAppDispatch();
+  const token = useAppSelector(selectToken);
+
+  const handleUpdate = (status: string) => {
+    const updatedTask = { ...task, status };
+    dispatch(updateTask({ task: updatedTask, token: token! }));
+  };
+
   return (
     <div className="flex justify-between mt-4">
       <div className="flex">
@@ -14,7 +26,9 @@ const TaskBox: FC<TaskBoxProps> = ({ task }) => {
           className="btn bg-base-300 mr-2"
           onClick={() => {
             (
-              document!.getElementById("task_information_modal") as HTMLFormElement
+              document!.getElementById(
+                "task_information_modal"
+              ) as HTMLFormElement
             ).showModal();
           }}
         >
@@ -25,9 +39,24 @@ const TaskBox: FC<TaskBoxProps> = ({ task }) => {
 
       <div className="flex">
         <div className="join">
-          <button className="btn join-item bg-base-100">In Progress</button>
-          <button className="btn join-item bg-base-100">On Hold</button>
-          <button className="btn join-item bg-base-100">Done</button>
+          <button
+            className="btn join-item bg-base-100"
+            onClick={() => handleUpdate("IN_PROGRESS")}
+          >
+            In Progress
+          </button>
+          <button
+            className="btn join-item bg-base-100"
+            onClick={() => handleUpdate("ON_HOLD")}
+          >
+            On Hold
+          </button>
+          <button
+            className="btn join-item bg-base-100"
+            onClick={() => handleUpdate("DONE")}
+          >
+            Done
+          </button>
         </div>
         <div>
           <button
@@ -60,7 +89,7 @@ const TaskBox: FC<TaskBoxProps> = ({ task }) => {
               />
             </svg>
           </button>
-          {/* MODAL */}
+          <TaskSettingsModal id={task.id} />
         </div>
       </div>
     </div>

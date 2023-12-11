@@ -43,21 +43,25 @@ const TaskSection: FC<CreateTaskModalProps> = ({ project }) => {
             {tasks
               .filter((task) => task.status === "IN_PROGRESS")
               .map((task) => (
-                <li key={task.id}>{task.name}</li>
+                <div key={task.id}>
+                  <TaskBox task={task} />
+                </div>
               ))}
           </ul>
         </div>
 
-        <div className="bg-base-200 p-4 rounded-lg flex-1">
+        {/* <div className="bg-base-200 p-4 rounded-lg flex-1">
           <p className="text-red-500 font-bold">On Hold</p>
           <ul>
             {tasks
               .filter((task) => task.status === "ON_HOLD")
               .map((task) => (
-                <li key={task.id}>{task.name}</li>
+                <div key={task.id}>
+                  <TaskBox task={task} />
+                </div>
               ))}
           </ul>
-        </div>
+        </div> */}
 
         <div className="bg-base-200 p-4 rounded-lg flex-1">
           <p className="text-green-500 font-bold">Done</p>
@@ -65,10 +69,24 @@ const TaskSection: FC<CreateTaskModalProps> = ({ project }) => {
             {tasks
               .filter((task) => task.status === "DONE")
               .map((task) => (
-                <li key={task.id}>{task.name}</li>
+                <div key={task.id}>
+                  <TaskBox task={task} />
+                </div>
               ))}
           </ul>
         </div>
+      </div>
+      <div className="bg-base-200 p-4 rounded-lg flex-1 mt-4">
+        <p className="text-red-500 font-bold">On Hold</p>
+        <ul>
+          {tasks
+            .filter((task) => task.status === "ON_HOLD")
+            .map((task) => (
+              <div key={task.id}>
+                <TaskBox task={task} />
+              </div>
+            ))}
+        </ul>
       </div>
     </div>
   );
