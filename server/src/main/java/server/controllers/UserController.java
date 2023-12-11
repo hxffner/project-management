@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import server.models.Project;
 import server.models.User;
 import server.payload.response.MessageResponse;
 import server.repository.UserRepository;
@@ -34,6 +35,11 @@ public class UserController {
     public User getUserById(@PathVariable(value="id") Long id) {
         Optional<User> opt = userRepository.findById(id);
         return opt.orElse(null);
+    }
+
+    @PutMapping("/users")
+    public User update(@RequestBody User user){
+        return userRepository.save(user);
     }
 
     @PostMapping("/users/upload-image")
