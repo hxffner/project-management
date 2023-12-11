@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { Task } from "../../../types/Event";
+import TaskInformationModal from "./TaskInformationModal";
 
 type TaskBoxProps = {
   task: Task;
@@ -9,7 +10,17 @@ const TaskBox: FC<TaskBoxProps> = ({ task }) => {
   return (
     <div className="flex justify-between mt-4">
       <div className="flex">
-        <button className="btn bg-base-300 mr-2">{task.name}</button>
+        <button
+          className="btn bg-base-300 mr-2"
+          onClick={() => {
+            (
+              document!.getElementById("task_information_modal") as HTMLFormElement
+            ).showModal();
+          }}
+        >
+          {task.name}
+        </button>
+        <TaskInformationModal task={task} />
       </div>
 
       <div className="flex">
@@ -18,7 +29,7 @@ const TaskBox: FC<TaskBoxProps> = ({ task }) => {
           <button className="btn join-item bg-base-100">On Hold</button>
           <button className="btn join-item bg-base-100">Done</button>
         </div>
-        <div >
+        <div>
           <button
             className="join-item btn btn-ghost normal-case text-xl"
             onClick={() => {
