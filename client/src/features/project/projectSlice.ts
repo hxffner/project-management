@@ -93,6 +93,18 @@ export const createProject = createAsyncThunk(
   }
 );
 
+export const deleteProject = createAsyncThunk(
+  "project/deleteProject",
+  async (details: { id: string; token: string }): Promise<void> => {
+    try {
+      await projectService.deleteProject(details.id, details.token);
+    } catch (error) {
+      console.error(`Error deleting project with ID ${details.id}:`, error);
+      throw error;
+    }
+  }
+);
+
 const projectSlice = createSlice({
   name: "project",
   initialState,
@@ -157,6 +169,23 @@ const projectSlice = createSlice({
       .addCase(createProject.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message || "Project creation failed";
+      })
+      .addCase(deleteProject.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteProject.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const deletedProjectIndex = state.projects!.findIndex(
+          (project) => project.id === action.meta.arg.id
+        );
+
+        if (deletedProjectIndex !== -1) {
+          state.projects!.splice(deletedProjectIndex, 1);
+        }
+      })
+      .addCase(deleteProject.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || "Failed to delete project";
       });
   },
 });

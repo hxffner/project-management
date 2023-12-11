@@ -1,12 +1,19 @@
 import { FC, FormEvent, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useNavigate } from "react-router-dom";
 import { selectToken } from "../../../features/auth/authSlice";
 import { toast } from "react-toastify";
-import { createProject } from "../../../features/project/projectSlice";
+import { deleteProject } from "../../../features/project/projectSlice";
 
-const ProjectSettingsModal: FC = () => {
+type ProjectSettingsModalProps = {
+  id: string;
+};
+
+const ProjectSettingsModal: FC<ProjectSettingsModalProps> = ({ id }) => {
   const token = useAppSelector(selectToken);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
 
   const name = useRef<HTMLInputElement | null>(null);
   const desc = useRef<HTMLInputElement | null>(null);
@@ -22,19 +29,39 @@ const ProjectSettingsModal: FC = () => {
       return;
     }
 
-    try {
-      await dispatch(
-        createProject({
-          name: nameValue,
-          description: descValue,
-          token: token!,
-        })
-      );
-      toast.success("Project creation successful!");
-    } catch (error) {
-      toast.error("Wrong details!");
-      console.error("Project failed:", error);
+    // try {
+    //   await dispatch(
+    //     createProject({
+    //       name: nameValue,
+    //       description: descValue,
+    //       token: token!,
+    //     })
+    //   );
+    //   toast.success("Project creation successful!");
+    // } catch (error) {
+    //   toast.error("Wrong details!");
+    //   console.error("Project failed:", error);
+    // }
+  };
+
+  const handleDeleteProject = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.preventDefault();
+  
+    if (!token) {
+      console.error("Token is null. Unable to delete project.");
+      return;
     }
+  
+    try {
+      await dispatch(deleteProject({ id, token }));
+    } catch (error) {
+      console.error("Error deleting project:", error);
+    }
+
+    toast.success("Project successfully deleted!")
+    navigate("/project")
   };
 
   return (
@@ -64,8 +91,13 @@ const ProjectSettingsModal: FC = () => {
               <button type="submit" className="btn btn-block max-w-xs">
                 Save
               </button>
+              <button
+                className="btn btn-block btn-error max-w-xs"
+                onClick={handleDeleteProject}
+              >
+                Delete Project
+              </button>
 
-              <button className="btn btn-block btn-error max-w-xs">Delete Project</button>
             </div>
           </form>
         </div>
