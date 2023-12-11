@@ -5,6 +5,7 @@ import java.util.Date;
 public class JwtResponse {
     private String jwtToken;
     private String username;
+    private Long userId;
     private String email;
     private String avatarPath;
 
@@ -13,8 +14,9 @@ public class JwtResponse {
     public JwtResponse() {
     }
 
-    public JwtResponse(String jwtToken, String username, String email, String avatarPath, Date createdAt) {
+    public JwtResponse(String jwtToken, Long userId, String username, String email, String avatarPath, Date createdAt) {
         this.jwtToken = jwtToken;
+        this.userId = userId;
         this.username = username;
         this.email = email;
         this.avatarPath = avatarPath;
@@ -29,6 +31,15 @@ public class JwtResponse {
     public void setJwtToken(String jwtToken) {
         this.jwtToken = jwtToken;
     }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
 
     public String getUsername() {
         return username;
@@ -67,6 +78,7 @@ public class JwtResponse {
         return "JwtResponse{" +
                 "jwtToken='" + jwtToken + '\'' +
                 "user: {" +
+                ", userId=" + userId +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", avatarPath='" + avatarPath + '\'' +

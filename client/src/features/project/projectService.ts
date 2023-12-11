@@ -12,6 +12,28 @@ export interface ProjectResponse {
 }
 
 export const projectService = {
+  getProjectsByUserId: async (
+    userId: string,
+    token: string
+  ): Promise<ProjectResponse[]> => {
+    const response = await fetch(
+      `${API_BASE_URL}/api/projects/by_user/${userId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch projects for user with ID ${userId}`);
+    }
+
+    return response.json();
+  },
+
   getProjectById: async (
     id: string,
     token: string

@@ -2,6 +2,7 @@ const API_BASE_URL = "http://localhost:8080";
 
 export interface AuthResponse {
   jwtToken: string;
+  userId: string;
   username: string;
   email: string;
   avatarPath?: string | null;

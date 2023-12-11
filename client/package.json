@@ -11,7 +11,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@aldabil/react-scheduler": "^2.7.26",
     "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.20",
     "@reduxjs/toolkit": "^1.9.7",
     "dayjs": "^1.11.10",
     "moment": "^2.29.4",

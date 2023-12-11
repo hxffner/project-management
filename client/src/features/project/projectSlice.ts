@@ -25,6 +25,28 @@ const initialState: ProjectState = {
   error: null,
 };
 
+export const getProjectsByUserId = createAsyncThunk(
+  "project/getProjectsByUserId",
+  async (details: {
+    userId: string;
+    token: string;
+  }): Promise<ProjectResponse[]> => {
+    try {
+      const response = await projectService.getProjectsByUserId(
+        details.userId,
+        details.token
+      );
+      return response;
+    } catch (error) {
+      console.error(
+        `Error fetching projects for user with ID ${details.userId}:`,
+        error
+      );
+      throw error;
+    }
+  }
+);
+
 export const getProjectById = createAsyncThunk(
   "project/getProjectById",
   async (details: { id: string; token: string }, { rejectWithValue }) => {
@@ -77,6 +99,21 @@ const projectSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(getProjectsByUserId.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(
+        getProjectsByUserId.fulfilled,
+        (state, action: PayloadAction<ProjectResponse[]>) => {
+          state.status = "succeeded";
+          state.projects = action.payload;
+        }
+      )
+      .addCase(getProjectsByUserId.rejected, (state, action) => {
+        state.status = "failed";
+        state.error =
+          action.error.message || "Failed to fetch projects by user ID";
+      })
       .addCase(getProjectById.pending, (state) => {
         state.status = "loading";
       })
