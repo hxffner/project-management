@@ -5,8 +5,11 @@ import org.springframework.web.bind.annotation.*;
 import server.models.Project;
 import server.models.CalendarEntry;
 import server.repository.ProjectRepository;
+import server.repository.UserRepository;
 
+import java.security.Principal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +18,9 @@ import java.util.Optional;
 public class ProjectController {
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/projects")
     public List<Project> fetchProjectList() {
@@ -43,7 +49,9 @@ public class ProjectController {
     }
 
     @PostMapping("/projects")
-    public Project create(@RequestBody Project project) {
+    public Project create(@RequestBody Project project, Principal principal) {
+        project.setCreatedAt(new Date());
+        project.setCreatedByUser(userRepository.findByUsername(principal.getName()).orElse(null));
         return projectRepository.save(project);
     }
 

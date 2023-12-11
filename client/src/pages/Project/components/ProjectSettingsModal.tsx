@@ -14,6 +14,7 @@ const ProjectSettingsModal: FC<ProjectSettingsModalProps> = ({ id }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+
   const name = useRef<HTMLInputElement | null>(null);
   const desc = useRef<HTMLInputElement | null>(null);
 
@@ -62,7 +63,7 @@ const ProjectSettingsModal: FC<ProjectSettingsModalProps> = ({ id }) => {
     toast.success("Project successfully deleted!")
     navigate("/project")
   };
-  
+
   return (
     <div>
       <dialog id="project_settings_modal" className="modal">
@@ -90,13 +91,13 @@ const ProjectSettingsModal: FC<ProjectSettingsModalProps> = ({ id }) => {
               <button type="submit" className="btn btn-block max-w-xs">
                 Save
               </button>
-
               <button
                 className="btn btn-block btn-error max-w-xs"
                 onClick={handleDeleteProject}
               >
                 Delete Project
               </button>
+
             </div>
           </form>
         </div>
