@@ -11,7 +11,7 @@ const Sidebar: FC = () => {
   return (
     <aside className="fixed top-0 left-0 h-full w-72 p-3 bg-base-300 flex flex-col">
       <div className="flex items-center justify-between">
-        <Link to={`/calendar`} className="btn btn-ghost normal-case text-xl">
+        <Link to={`/`} className="btn btn-ghost normal-case text-xl">
           Project Manager
         </Link>
       </div>
