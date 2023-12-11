@@ -13,7 +13,7 @@ public class Task extends CalendarEntry {
     private Date dueDate;
 
     @Enumerated(EnumType.ORDINAL)
-    private StatusEnum status;
+    private StatusEnum status = StatusEnum.IN_QUEUE;
 
     public Task(Project project, String name, String description, Date startDate, Date endDate, Date dueDate) {
         super(project, name, description, startDate, endDate);

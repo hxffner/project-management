@@ -7,8 +7,8 @@ import {
 } from "../../features/project/projectSlice";
 import { selectToken } from "../../features/auth/authSlice";
 import CreateTaskModal from "./components/CreateTaskModal";
-import Task from "./components/Task";
 import ProjectSettingsModal from "./components/ProjectSettingsModal";
+import TaskSection from "./components/TaskSection";
 
 const ProjectDetailPage: FC = () => {
   const { projectId } = useParams();
@@ -45,7 +45,7 @@ const ProjectDetailPage: FC = () => {
               >
                 Add Task
               </button>
-              <CreateTaskModal />
+              <CreateTaskModal project={project} />
               <div>
                 <button
                   className="join-item btn btn-ghost normal-case text-xl"
@@ -82,7 +82,7 @@ const ProjectDetailPage: FC = () => {
             </div>
           </div>
           <div className="mx-16 mt-8">
-            <Task />
+            <TaskSection project={project} />
           </div>
         </div>
       ) : (

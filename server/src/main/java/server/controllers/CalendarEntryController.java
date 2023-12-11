@@ -85,13 +85,13 @@ public class CalendarEntryController {
     }
 
     @GetMapping("/event/by_project/{projectId}")
-    public List<Event> getEventByProjectId(@PathVariable(value="userId") Long userId) {
-        return eventRepository.findByProjectId(userId);
+    public List<Event> getEventByProjectId(@PathVariable(value="projectId") Long projectId) {
+        return eventRepository.findByProjectId(projectId);
     }
 
     @GetMapping("/task/by_project/{projectId}")
-    public List<Task> getTaskByProjectId(@PathVariable(value="userId") Long userId) {
-        return taskRepository.findByProjectId(userId);
+    public List<Task> getTaskByProjectId(@PathVariable(value="projectId") Long projectId) {
+        return taskRepository.findByProjectId(projectId);
     }
 
     @PostMapping("/event/create")

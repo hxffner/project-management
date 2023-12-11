@@ -1,3 +1,6 @@
+import { Task } from "../../types/Event";
+import { ProjectResponse } from "../project/projectService";
+
 const API_BASE_URL = "http://localhost:8080";
 
 export interface EventResponse {
@@ -11,6 +14,7 @@ export interface EventResponse {
 
 export const eventService = {
   createTask: async (
+    project: ProjectResponse,
     name: string,
     description: string,
     startDate: string,
@@ -23,7 +27,7 @@ export const eventService = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ name, description, startDate, endDate }),
+      body: JSON.stringify({ project, name, description, startDate, endDate }),
     });
 
     if (!response.ok) {
@@ -51,6 +55,28 @@ export const eventService = {
 
     if (!response.ok) {
       throw new Error("Event creation failed");
+    }
+
+    return response.json();
+  },
+
+  getTasksByProjectId: async (
+    projectId: string,
+    token: string
+  ): Promise<Task[]> => {
+    const response = await fetch(
+      `${API_BASE_URL}/api/task/by_project/${projectId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch tasks by project ID");
     }
 
     return response.json();

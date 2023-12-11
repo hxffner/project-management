@@ -2,11 +2,15 @@ import { FC, FormEvent, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectToken } from "../../../features/auth/authSlice";
 import { toast } from "react-toastify";
-import { createProject } from "../../../features/project/projectSlice";
 import { createTask } from "../../../features/event/eventSlice";
 import dayjs from "dayjs";
+import { ProjectResponse } from "../../../features/project/projectService";
 
-const CreateTaskModal: FC = () => {
+type CreateTaskModalProps = {
+  project: ProjectResponse;
+};
+
+const CreateTaskModal: FC<CreateTaskModalProps> = ({ project }) => {
   const token = useAppSelector(selectToken);
   const dispatch = useAppDispatch();
 
@@ -34,6 +38,7 @@ const CreateTaskModal: FC = () => {
     try {
       await dispatch(
         createTask({
+          project: project,
           name: nameValue,
           description: descValue,
           startDate: startDateObject,
