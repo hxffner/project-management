@@ -105,4 +105,24 @@ export const projectService = {
       throw new Error(`Failed to delete project with ID ${id}`);
     }
   },
+
+  updateProject: async (
+    project: ProjectResponse,
+    token: string
+  ): Promise<ProjectResponse> => {
+    const response = await fetch(`${API_BASE_URL}/api/projects`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(project),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update project with ID ${project.id}`);
+    }
+
+    return response.json();
+  },
 };
