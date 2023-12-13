@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { Task } from "../../../types/Event";
+import AddSubTask from "./AddSubTask";
 
 type TaskInformationModalProps = {
   task: Task;
@@ -25,6 +26,7 @@ const TaskInformationModal: FC<TaskInformationModalProps> = ({ task }) => {
             <p>Start Date: {task.startDate.toString()}</p>
             <p>End Date: {task.endDate.toString()}</p>
           </div>
+          <AddSubTask task={task} />
         </div>
       </dialog>
     </div>

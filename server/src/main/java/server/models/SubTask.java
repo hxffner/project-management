@@ -1,7 +1,7 @@
 package server.models;
 
 import jakarta.persistence.*;
-
+@Entity
 public class SubTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,6 +13,9 @@ public class SubTask {
 
     @Column(name = "desc")
     private String desc;
+
+    public SubTask() {
+    }
 
     public SubTask(String name, String desc) {
         this.name = name;
