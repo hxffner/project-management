@@ -1,7 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { EventResponse, eventService } from "./eventService";
 import { ProjectResponse } from "../project/projectService";
-import { Task } from "../../types/Event";
+import { Event, SubTask, Task } from "../../types/Event";
 import { RootState } from "../../app/store";
 
 interface EventState {
@@ -14,6 +14,7 @@ interface EventState {
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
   tasks: Task[];
+  events: Event[];
 }
 
 const initialState: EventState = {
@@ -21,6 +22,7 @@ const initialState: EventState = {
   status: "idle",
   error: null,
   tasks: [],
+  events: [],
 };
 
 export const createTask = createAsyncThunk(
@@ -93,6 +95,35 @@ export const getTasksByProjectId = createAsyncThunk(
   }
 );
 
+export const getEventByUserId = createAsyncThunk(
+  "event/getEventByUserId",
+  async (details: { userId: string; token: string }): Promise<Event[]> => {
+    const response = await eventService.getEventByUserId(
+      details.userId,
+      details.token
+    );
+    return response;
+  }
+);
+
+export const createSubtaskToTask = createAsyncThunk(
+  "event/createSubtaskToTask",
+  async (details: {
+    taskId: string;
+    name: string;
+    desc: string;
+    token: string;
+  }): Promise<SubTask> => {
+    const response = await eventService.createSubtaskToTask(
+      details.taskId,
+      details.name,
+      details.desc,
+      details.token
+    );
+    return response;
+  }
+);
+
 const eventSlice = createSlice({
   name: "event",
   initialState,
@@ -154,7 +185,6 @@ const eventSlice = createSlice({
         state.tasks = state.tasks.filter(
           (task) => task.id !== Number(action.meta.arg.taskId)
         );
-      
       })
       .addCase(deleteTask.rejected, (state, action) => {
         state.status = "failed";
@@ -178,10 +208,51 @@ const eventSlice = createSlice({
         state.status = "failed";
         state.error =
           action.error.message || "Failed to fetch tasks by project ID";
+      })
+      .addCase(getEventByUserId.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(
+        getEventByUserId.fulfilled,
+        (state, action: PayloadAction<Event[]>) => {
+          state.status = "succeeded";
+          state.events = action.payload;
+        }
+      )
+      .addCase(getEventByUserId.rejected, (state, action) => {
+        state.status = "failed";
+        state.error =
+          action.error.message || "Failed to fetch tasks by project ID";
+      })
+      .addCase(createSubtaskToTask.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(
+        createSubtaskToTask.fulfilled,
+        (
+          state,
+          action: PayloadAction<SubTask, string, { arg: { taskId: string } }>
+        ) => {
+          state.status = "succeeded";
+          state.tasks = state.tasks.map((task) =>
+            task.id === Number(action.meta.arg.taskId)
+              ? {
+                  ...task,
+                  subtasks: [...task.subTasks, action.payload],
+                }
+              : task
+          );
+        }
+      )
+
+      .addCase(createSubtaskToTask.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || "Failed to create subtask";
       });
   },
 });
 
 export const selectTasks = (state: RootState) => state.event.tasks;
+export const selectEvents = (state: RootState) => state.event.events;
 
 export default eventSlice.reducer;

@@ -15,6 +15,9 @@ public class SubTask {
     @Column(name = "desc")
     private String desc;
 
+    public SubTask() {
+    }
+
     public SubTask(String name, String desc) {
         this.name = name;
         this.desc = desc;
