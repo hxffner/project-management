@@ -10,6 +10,7 @@ import TaskBox from "./TaskBox";
 import Notifications from "./Notifications";
 import dayjs from "dayjs";
 
+
 type CreateTaskModalProps = {
   project: ProjectResponse;
 };
@@ -18,7 +19,7 @@ const TaskSection: FC<CreateTaskModalProps> = ({ project }) => {
   const dispatch = useAppDispatch();
   const token = useAppSelector(selectToken);
   const tasks = useAppSelector(selectTasks);
-
+  
   const currentDate = dayjs();
   const nextDay = currentDate.add(1, "day");
 
@@ -43,6 +44,7 @@ const TaskSection: FC<CreateTaskModalProps> = ({ project }) => {
           </div>
         </div>
       ))}
+
       <div className="bg-base-200 p-4 rounded-lg">
         <p className="text-amber-800 font-bold">In Queue</p>
         <ul>
