@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import server.models.CalendarEntry;
 import server.models.Event;
+import server.models.SubTask;
 import server.models.Task;
 import server.repository.CalendarEntryRepository;
 import server.repository.EventRepository;
+import server.repository.SubTaskRepository;
 import server.repository.TaskRepository;
 
 import java.util.List;
@@ -60,6 +62,25 @@ public class CalendarEntryController {
     public Task getTaskById(@PathVariable(value="id") Long id) {
         Optional<Task> opt = taskRepository.findById(id);
         return opt.orElse(null);
+    }
+
+    @Autowired
+    SubTaskRepository subTaskRepository;
+
+    @PostMapping("/task/addSubTask/{id}")
+    public Task addSubTaskToTask(@PathVariable Long id, @RequestBody SubTask subTask) {
+        Optional<Task> task = taskRepository.findById(id);
+        if(task.isPresent()) {
+            if(task.get().addSubTask(subTask)) {
+                subTaskRepository.save(subTask);
+                taskRepository.save(task.get());
+                return task.get();
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 
     @GetMapping("/event/{name}")
