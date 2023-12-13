@@ -4,11 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import server.models.CalendarEntry;
 import server.models.Event;
+import server.models.SubTask;
 import server.models.Task;
-import server.repository.CalendarEntryRepository;
-import server.repository.EventRepository;
-import server.repository.TaskRepository;
+import server.repository.*;
 
+import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,6 +63,25 @@ public class CalendarEntryController {
         return opt.orElse(null);
     }
 
+    @Autowired
+    SubTaskRepository subTaskRepository;
+
+    @PostMapping("/task/addSubTask/{id}")
+    public Task addSubTaskToTask(@PathVariable Long id, @RequestBody SubTask subTask) {
+        Optional<Task> task = taskRepository.findById(id);
+        if(task.isPresent()) {
+            if(task.get().addSubTask(subTask)) {
+                subTaskRepository.save(subTask);
+                taskRepository.save(task.get());
+                return task.get();
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
     @GetMapping("/event/{name}")
     public Event getEventByName(@PathVariable(value="name") String name) {
         Optional<Event> opt = eventRepository.findByName(name);
@@ -94,13 +114,20 @@ public class CalendarEntryController {
         return taskRepository.findByProjectId(projectId);
     }
 
+    @Autowired
+    UserRepository userRepository;
+
     @PostMapping("/event/create")
-    public Event create(@RequestBody Event event) {
+    public Event create(@RequestBody Event event, Principal principal) {
+        event.setCreatedAt(new Date());
+        event.setCreatedByUser(userRepository.findByUsername(principal.getName()).get());
         return eventRepository.save(event);
     }
 
     @PostMapping("/task/create")
-    public Task create(@RequestBody Task task) {
+    public Task create(@RequestBody Task task, Principal principal) {
+        task.setCreatedAt(new Date());
+        task.setCreatedByUser(userRepository.findByUsername(principal.getName()).get());
         return taskRepository.save(task);
     }
 

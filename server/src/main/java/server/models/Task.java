@@ -3,7 +3,9 @@ package server.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -15,6 +17,10 @@ public class Task extends CalendarEntry {
     @Enumerated(EnumType.ORDINAL)
     private StatusEnum status = StatusEnum.IN_QUEUE;
 
+    @OneToMany
+    @JoinColumn(name = "sub_tasks")
+    private List<SubTask> subTasks = new ArrayList<>();
+
     public Task(Project project, String name, String description, Date startDate, Date endDate, Date dueDate) {
         super(project, name, description, startDate, endDate);
         this.dueDate = dueDate;
@@ -22,6 +28,14 @@ public class Task extends CalendarEntry {
     }
 
     public Task() {
+    }
+
+    public boolean addSubTask(SubTask subTask) {
+        return subTasks.add(subTask);
+    }
+
+    public List<SubTask> getSubTasks() {
+        return subTasks;
     }
 
     public Date getDueDate() {
@@ -46,6 +60,7 @@ public class Task extends CalendarEntry {
                 super.toString() +
                 ", dueDate=" + dueDate +
                 ", status=" + status +
+                ", subTasks=" + subTasks +
                 '}';
     }
 
