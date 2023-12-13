@@ -2,6 +2,7 @@ package server.models;
 
 import jakarta.persistence.*;
 
+@Entity
 public class SubTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
