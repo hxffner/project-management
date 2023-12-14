@@ -9,7 +9,7 @@ const HomePage: FC = () => {
 
   useEffect(() => {
     user ? navigate("/calendar") : navigate("/register");
-  });
+  }, [user, navigate]);
 
   return <div>{user ? <div>logged in</div> : <div>logged out</div>}</div>;
 };

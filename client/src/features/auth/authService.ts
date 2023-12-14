@@ -1,3 +1,5 @@
+import { User } from "../../types/User";
+
 const API_BASE_URL = "http://localhost:8080";
 
 export interface AuthResponse {
@@ -50,5 +52,22 @@ export const authService = {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     return Promise.resolve();
+  },
+
+  updateUser: async (updatedUser: User, token: string): Promise<User> => {
+    const response = await fetch(`${API_BASE_URL}/api/users`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updatedUser),
+    });
+
+    if (!response.ok) {
+      throw new Error("User update failed");
+    }
+
+    return response.json();
   },
 };
