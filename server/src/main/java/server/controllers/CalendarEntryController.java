@@ -171,7 +171,11 @@ public class CalendarEntryController {
         if(file.isPresent()) {
             File fileToSend = new File(pathString + "/" + id);
             if (fileToSend.exists() && fileToSend.isFile())
-                return ResponseEntity.ok(new FileResponse(file.get().getFilename(), fileToSend));
+                try {
+                    return ResponseEntity.ok(new FileResponse(file.get().getFilename(), Files.readAllBytes(fileToSend.toPath())));
+                } catch (IOException exception) {
+                    return ResponseEntity.badRequest().body(new MessageResponse("IOException while reading file"));
+                }
         }
         return ResponseEntity.badRequest().body(new MessageResponse("Couldn't get file by id: " + id));
     }
