@@ -21,6 +21,10 @@ public class Task extends CalendarEntry {
     @JoinColumn(name = "sub_tasks")
     private List<SubTask> subTasks = new ArrayList<>();
 
+    @OneToMany
+    @JoinColumn(name = "file_references")
+    private List<UploadedFile> files = new ArrayList<>();
+
     public Task(Project project, String name, String description, Date startDate, Date endDate, Date dueDate) {
         super(project, name, description, startDate, endDate);
         this.dueDate = dueDate;
@@ -32,6 +36,14 @@ public class Task extends CalendarEntry {
 
     public boolean addSubTask(SubTask subTask) {
         return subTasks.add(subTask);
+    }
+
+    public boolean addFileReference(UploadedFile file) {
+        return files.add(file);
+    }
+
+    public void dereferenceFile(UploadedFile file) {
+        files.remove(file);
     }
 
     public List<SubTask> getSubTasks() {
