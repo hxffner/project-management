@@ -2,10 +2,10 @@ package server.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import server.models.*;
-import server.payload.response.FileResponse;
 import server.payload.response.MessageResponse;
 import server.repository.*;
 
@@ -167,12 +167,12 @@ public class CalendarEntryController {
 
     @GetMapping("/files/{id}")
     public ResponseEntity<?> getFile(@PathVariable Long id) {
-        Optional<UploadedFile> file = fileRepository.getUploadFileById(id);
+        Optional<UploadedFile> file = fileRepository.getUploadedFileById(id);
         if(file.isPresent()) {
-            File fileToSend = new File(pathString + "/" + id);
+            File fileToSend = new File(pathString + "/" + id + "." + file.get().getExtension());
             if (fileToSend.exists() && fileToSend.isFile())
                 try {
-                    return ResponseEntity.ok(new FileResponse(file.get().getFilename(), Files.readAllBytes(fileToSend.toPath())));
+                    return ResponseEntity.ok(Files.readAllBytes(fileToSend.toPath()));
                 } catch (IOException exception) {
                     return ResponseEntity.badRequest().body(new MessageResponse("IOException while reading file"));
                 }
@@ -181,17 +181,21 @@ public class CalendarEntryController {
     }
 
     @PostMapping("/files/{taskId}")
-    public void uploadFile(@PathVariable Long taskId, @RequestBody MultipartFile file) {
+    public ResponseEntity<?> uploadFile(@PathVariable Long taskId, @RequestBody MultipartFile file) {
+        UploadedFile uploadedFile = fileRepository.save(new UploadedFile(file.getName(), StringUtils.getFilenameExtension(file.getOriginalFilename())));
         try {
-            UploadedFile uploadedFile = new UploadedFile(file.getName());
-            Files.copy(file.getInputStream(), filePath.resolve(uploadedFile.getId().toString()), StandardCopyOption.REPLACE_EXISTING);
-            Task task = taskRepository.findById(taskId).get();
-            task.addFileReference(uploadedFile);
-            taskRepository.save(task);
-            fileRepository.save(uploadedFile);
+            Files.copy(file.getInputStream(), filePath.resolve(uploadedFile.getId().toString() + "." + StringUtils.getFilenameExtension(file.getOriginalFilename())), StandardCopyOption.REPLACE_EXISTING);
+            Optional<Task> task = taskRepository.findById(taskId);
+            if(task.isEmpty())
+                return ResponseEntity.badRequest().body(new MessageResponse("No task with id: " + taskId));
+            task.get().addFileReference(uploadedFile);
+            taskRepository.save(task.get());
+            return ResponseEntity.ok(new MessageResponse("File uploaded"));
         } catch (IOException ex) {
             System.out.println("Ouch:/");
+            fileRepository.delete(uploadedFile);
             ex.printStackTrace();
+            return ResponseEntity.badRequest().body(new MessageResponse("Upload failed"));
         }
     }
 
@@ -199,7 +203,7 @@ public class CalendarEntryController {
     public void deleteFile(@PathVariable(value = "fileId") Long id, @PathVariable(value = "taskId") Long taskId) {
         try {
             Files.delete(filePath.resolve(id.toString()));
-            UploadedFile file = fileRepository.getUploadFileById(id).get();
+            UploadedFile file = fileRepository.getUploadedFileById(id).get();
             taskRepository.findById(taskId).get().dereferenceFile(file);
             fileRepository.delete(file);
         } catch (IOException ex) {
