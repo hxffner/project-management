@@ -77,7 +77,7 @@ const ProjectDetailPage: FC = () => {
                     />
                   </svg>
                 </button>
-                <ProjectSettingsModal id={projectId!} />
+                <ProjectSettingsModal project={project} />
               </div>
             </div>
           </div>

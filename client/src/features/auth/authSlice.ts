@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { authService } from "./authService";
 import { RootState } from "../../app/store";
+import { User } from "../../types/User";
 
 interface AuthState {
   user: null | {
@@ -80,6 +81,14 @@ export const logout = createAsyncThunk("auth/logout", async () => {
   return { user: null, jwtToken: null };
 });
 
+export const updateUser = createAsyncThunk(
+  "event/updateUser",
+  async (payload: { user: User; token: string }): Promise<User> => {
+    const response = await authService.updateUser(payload.user, payload.token);
+    return response;
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -139,7 +148,22 @@ const authSlice = createSlice({
           state.user = action.payload.user;
           state.jwtToken = action.payload.jwtToken;
         }
-      );
+      )
+      .addCase(updateUser.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateUser.fulfilled, (state, action: PayloadAction<User | undefined>) => {
+        state.status = "succeeded";
+        state.user = action.payload ? {
+          ...action.payload,
+          avatarPath: action.payload.avatarPath || "",
+          createdAt: action.payload.createdAt || "",
+        } : null;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || "Task update failed";
+      });
   },
 });
 

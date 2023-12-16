@@ -105,6 +105,30 @@ export const deleteProject = createAsyncThunk(
   }
 );
 
+export const updateProject = createAsyncThunk(
+  "project/updateProject",
+  async (
+    details: { project: ProjectResponse; token: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await projectService.updateProject(
+        details.project,
+        details.token
+      );
+      return response;
+    } catch (error) {
+      console.error(
+        `Error updating project with ID ${details.project.id}:`,
+        error
+      );
+      throw rejectWithValue(
+        `Failed to update project with ID ${details.project.id}`
+      );
+    }
+  }
+);
+
 const projectSlice = createSlice({
   name: "project",
   initialState,
@@ -186,6 +210,22 @@ const projectSlice = createSlice({
       .addCase(deleteProject.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message || "Failed to delete project";
+      })
+      .addCase(updateProject.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(
+        updateProject.fulfilled,
+        (state, action: PayloadAction<ProjectResponse>) => {
+          state.status = "succeeded";
+          state.projects = state.projects!.map((project) =>
+            project.id === action.payload.id ? action.payload : project
+          );
+        }
+      )
+      .addCase(updateProject.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || "Failed to update project";
       });
   },
 });

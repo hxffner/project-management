@@ -1,14 +1,22 @@
 package server.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import server.models.CalendarEntry;
-import server.models.Event;
-import server.models.Task;
-import server.repository.CalendarEntryRepository;
-import server.repository.EventRepository;
-import server.repository.TaskRepository;
+import org.springframework.web.multipart.MultipartFile;
+import server.models.*;
+import server.payload.response.FileResponse;
+import server.payload.response.MessageResponse;
+import server.repository.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,6 +70,25 @@ public class CalendarEntryController {
         return opt.orElse(null);
     }
 
+    @Autowired
+    SubTaskRepository subTaskRepository;
+
+    @PostMapping("/task/addSubTask/{id}")
+    public Task addSubTaskToTask(@PathVariable Long id, @RequestBody SubTask subTask) {
+        Optional<Task> task = taskRepository.findById(id);
+        if(task.isPresent()) {
+            if(task.get().addSubTask(subTask)) {
+                subTaskRepository.save(subTask);
+                taskRepository.save(task.get());
+                return task.get();
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
     @GetMapping("/event/{name}")
     public Event getEventByName(@PathVariable(value="name") String name) {
         Optional<Event> opt = eventRepository.findByName(name);
@@ -94,13 +121,20 @@ public class CalendarEntryController {
         return taskRepository.findByProjectId(projectId);
     }
 
+    @Autowired
+    UserRepository userRepository;
+
     @PostMapping("/event/create")
-    public Event create(@RequestBody Event event) {
+    public Event create(@RequestBody Event event, Principal principal) {
+        event.setCreatedAt(new Date());
+        event.setCreatedByUser(userRepository.findByUsername(principal.getName()).get());
         return eventRepository.save(event);
     }
 
     @PostMapping("/task/create")
-    public Task create(@RequestBody Task task) {
+    public Task create(@RequestBody Task task, Principal principal) {
+        task.setCreatedAt(new Date());
+        task.setCreatedByUser(userRepository.findByUsername(principal.getName()).get());
         return taskRepository.save(task);
     }
 
@@ -122,5 +156,55 @@ public class CalendarEntryController {
     @DeleteMapping({"/task/delete/{id}"})
     public void deleteTaskById(@PathVariable(value="id") Long id){
         taskRepository.deleteById(id);
+    }
+
+    //CHANGE HERE FOR YOUR OWN PATH PLS
+    private final String pathString = "C:/Users/sromeo/IdeaProjects/project-management/server/src/main/resources/files";
+    private final Path filePath = Paths.get(pathString);
+
+    @Autowired
+    FileRepository fileRepository;
+
+    @GetMapping("/files/{id}")
+    public ResponseEntity<?> getFile(@PathVariable Long id) {
+        Optional<UploadedFile> file = fileRepository.getUploadFileById(id);
+        if(file.isPresent()) {
+            File fileToSend = new File(pathString + "/" + id);
+            if (fileToSend.exists() && fileToSend.isFile())
+                try {
+                    return ResponseEntity.ok(new FileResponse(file.get().getFilename(), Files.readAllBytes(fileToSend.toPath())));
+                } catch (IOException exception) {
+                    return ResponseEntity.badRequest().body(new MessageResponse("IOException while reading file"));
+                }
+        }
+        return ResponseEntity.badRequest().body(new MessageResponse("Couldn't get file by id: " + id));
+    }
+
+    @PostMapping("/files/{taskId}")
+    public void uploadFile(@PathVariable Long taskId, @RequestBody MultipartFile file) {
+        try {
+            UploadedFile uploadedFile = new UploadedFile(file.getName());
+            Files.copy(file.getInputStream(), filePath.resolve(uploadedFile.getId().toString()), StandardCopyOption.REPLACE_EXISTING);
+            Task task = taskRepository.findById(taskId).get();
+            task.addFileReference(uploadedFile);
+            taskRepository.save(task);
+            fileRepository.save(uploadedFile);
+        } catch (IOException ex) {
+            System.out.println("Ouch:/");
+            ex.printStackTrace();
+        }
+    }
+
+    @DeleteMapping("/files/{taskId}/{fileId}")
+    public void deleteFile(@PathVariable(value = "fileId") Long id, @PathVariable(value = "taskId") Long taskId) {
+        try {
+            Files.delete(filePath.resolve(id.toString()));
+            UploadedFile file = fileRepository.getUploadFileById(id).get();
+            taskRepository.findById(taskId).get().dereferenceFile(file);
+            fileRepository.delete(file);
+        } catch (IOException ex) {
+            System.out.println("Hihi");
+            ex.printStackTrace();
+        }
     }
 }

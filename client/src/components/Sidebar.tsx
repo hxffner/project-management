@@ -1,12 +1,18 @@
 import { FC } from "react";
-
 import { Link } from "react-router-dom";
+
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { logout, selectUser } from "../features/auth/authSlice";
 
 const Sidebar: FC = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    user ? navigate("/calendar") : navigate("/register");
+  }, [user, navigate]);
+  
 
   return (
     <aside className="fixed top-0 left-0 h-full w-72 p-3 bg-base-300 flex flex-col">

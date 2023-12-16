@@ -3,17 +3,20 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { selectToken } from "../../../features/auth/authSlice";
 import { toast } from "react-toastify";
-import { deleteProject } from "../../../features/project/projectSlice";
+import {
+  deleteProject,
+  updateProject,
+} from "../../../features/project/projectSlice";
+import { ProjectResponse } from "../../../features/project/projectService";
 
 type ProjectSettingsModalProps = {
-  id: string;
+  project: ProjectResponse;
 };
 
-const ProjectSettingsModal: FC<ProjectSettingsModalProps> = ({ id }) => {
+const ProjectSettingsModal: FC<ProjectSettingsModalProps> = ({ project }) => {
   const token = useAppSelector(selectToken);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
 
   const name = useRef<HTMLInputElement | null>(null);
   const desc = useRef<HTMLInputElement | null>(null);
@@ -24,44 +27,38 @@ const ProjectSettingsModal: FC<ProjectSettingsModalProps> = ({ id }) => {
     const nameValue = name.current?.value;
     const descValue = desc.current?.value;
 
-    if (!nameValue || !descValue) {
+    if (nameValue === undefined || descValue === undefined) {
       toast.error("Fill in every detail!");
       return;
     }
 
-    // try {
-    //   await dispatch(
-    //     createProject({
-    //       name: nameValue,
-    //       description: descValue,
-    //       token: token!,
-    //     })
-    //   );
-    //   toast.success("Project creation successful!");
-    // } catch (error) {
-    //   toast.error("Wrong details!");
-    //   console.error("Project failed:", error);
-    // }
+    const updatedProject = {
+      ...project,
+      name: nameValue,
+      description: descValue,
+    };
+
+    dispatch(updateProject({ project: updatedProject, token: token! }));
   };
 
   const handleDeleteProject = async (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
-  
+
     if (!token) {
       console.error("Token is null. Unable to delete project.");
       return;
     }
-  
+
     try {
-      await dispatch(deleteProject({ id, token }));
+      await dispatch(deleteProject({ id: project.id, token }));
     } catch (error) {
       console.error("Error deleting project:", error);
     }
 
-    toast.success("Project successfully deleted!")
-    navigate("/project")
+    toast.success("Project successfully deleted!");
+    navigate("/project");
   };
 
   return (
@@ -78,13 +75,15 @@ const ProjectSettingsModal: FC<ProjectSettingsModalProps> = ({ id }) => {
               <h1 className="font-bold text-xl">Project Settings</h1>
               <input
                 type="text"
-                placeholder="Name"
+                placeholder={project.name}
+                defaultValue={project.name}
                 className="input input-bordered w-full max-w-xs"
                 ref={name}
               />
               <input
                 type="text"
-                placeholder="Desc"
+                placeholder={project.description}
+                defaultValue={project.description}
                 className="input input-bordered w-full max-w-xs"
                 ref={desc}
               />
@@ -97,7 +96,6 @@ const ProjectSettingsModal: FC<ProjectSettingsModalProps> = ({ id }) => {
               >
                 Delete Project
               </button>
-
             </div>
           </form>
         </div>

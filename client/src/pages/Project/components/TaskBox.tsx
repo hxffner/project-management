@@ -89,7 +89,7 @@ const TaskBox: FC<TaskBoxProps> = ({ task }) => {
               />
             </svg>
           </button>
-          <TaskSettingsModal id={task.id} />
+          <TaskSettingsModal task={task} />
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { Task } from "../../types/Event";
+import { Event, SubTask, Task } from "../../types/Event";
 import { ProjectResponse } from "../project/projectService";
 
 const API_BASE_URL = "http://localhost:8080";
@@ -11,6 +11,8 @@ export interface EventResponse {
   startDate: string;
   endDate: string;
 }
+
+// /event/by_user/{userId}
 
 export const eventService = {
   createTask: async (
@@ -37,10 +39,7 @@ export const eventService = {
     return response.json();
   },
 
-  updateTask: async (
-    updatedTask: Task,
-    token: string
-  ): Promise<Task> => {
+  updateTask: async (updatedTask: Task, token: string): Promise<Task> => {
     const response = await fetch(`${API_BASE_URL}/api/task/update`, {
       method: "PUT",
       headers: {
@@ -111,6 +110,50 @@ export const eventService = {
 
     if (!response.ok) {
       throw new Error("Failed to fetch tasks by project ID");
+    }
+
+    return response.json();
+  },
+
+  getEventByUserId: async (userId: string, token: string): Promise<Event[]> => {
+    const response = await fetch(
+      `${API_BASE_URL}/api/event/by_user/${userId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch events by user ID");
+    }
+
+    return response.json();
+  },
+
+  createSubtaskToTask: async (
+    taskId: string,
+    name: string,
+    desc: string,
+    token: string
+  ): Promise<SubTask> => {
+    const response = await fetch(
+      `${API_BASE_URL}/api/task/addSubTask/${taskId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name, desc }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch events by user ID");
     }
 
     return response.json();

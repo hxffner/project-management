@@ -2,13 +2,14 @@ import { FC, FormEvent, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectToken } from "../../../features/auth/authSlice";
 import { toast } from "react-toastify";
-import { deleteTask } from "../../../features/event/eventSlice";
+import { deleteTask, updateTask } from "../../../features/event/eventSlice";
+import { Task } from "../../../types/Event";
 
 type TaskSettingsModalProps = {
-  id: number;
+  task: Task;
 };
 
-const TaskSettingsModal: FC<TaskSettingsModalProps> = ({ id }) => {
+const TaskSettingsModal: FC<TaskSettingsModalProps> = ({ task }) => {
   const token = useAppSelector(selectToken);
   const dispatch = useAppDispatch();
 
@@ -26,19 +27,20 @@ const TaskSettingsModal: FC<TaskSettingsModalProps> = ({ id }) => {
       return;
     }
 
-    // try {
-    //   await dispatch(
-    //     createProject({
-    //       name: nameValue,
-    //       description: descValue,
-    //       token: token!,
-    //     })
-    //   );
-    //   toast.success("Project creation successful!");
-    // } catch (error) {
-    //   toast.error("Wrong details!");
-    //   console.error("Project failed:", error);
-    // }
+    if (nameValue === undefined || descValue === undefined) {
+      toast.error("Fill in every detail!");
+      return;
+    }
+
+    const updatedTask = {
+      ...task,
+      name: nameValue,
+      description: descValue,
+    };
+
+    dispatch(updateTask({ task: updatedTask, token: token! }));
+
+
   };
 
   const handleDeleteTask = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -50,7 +52,7 @@ const TaskSettingsModal: FC<TaskSettingsModalProps> = ({ id }) => {
     }
 
     try {
-      await dispatch(deleteTask({ taskId: id, token }));
+      await dispatch(deleteTask({ taskId: task.id, token }));
     } catch (error) {
       console.error("Error deleting task:", error);
     }
@@ -72,13 +74,15 @@ const TaskSettingsModal: FC<TaskSettingsModalProps> = ({ id }) => {
               <h1 className="font-bold text-xl">Task Settings</h1>
               <input
                 type="text"
-                placeholder="Name"
+                placeholder={task.name}
+                defaultValue={task.name}
                 className="input input-bordered w-full max-w-xs"
                 ref={name}
               />
               <input
                 type="text"
-                placeholder="Desc"
+                placeholder={task.description}
+                defaultValue={task.description}
                 className="input input-bordered w-full max-w-xs"
                 ref={desc}
               />
