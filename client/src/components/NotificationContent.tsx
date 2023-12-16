@@ -9,11 +9,9 @@ type NotificationContentProps = {
 const NotificationContent: FC<NotificationContentProps> = ({ task }) => {
   const currentDate = dayjs();
   const nextDay = currentDate.add(1, "day");
-
-  // Parse task.endDate using dayjs
+  
   const taskEndDate = dayjs(task.endDate);
 
-  // Check if task.endDate is the next day and task.status is not "DONE"
   const shouldShowTask =
     taskEndDate.isSame(nextDay, "day") && task.status !== "DONE";
 

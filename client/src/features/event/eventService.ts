@@ -134,6 +134,26 @@ export const eventService = {
     return response.json();
   },
 
+  getTaskByUserId: async (userId: string, token: string): Promise<Task[]> => {
+    const response = await fetch(
+      `${API_BASE_URL}/api/task/by_user/${userId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch task by user ID");
+    }
+
+    return response.json();
+  },
+
+
   createSubtaskToTask: async (
     taskId: string,
     name: string,
