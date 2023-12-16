@@ -106,6 +106,17 @@ export const getEventByUserId = createAsyncThunk(
   }
 );
 
+export const getTaskByUserId = createAsyncThunk(
+  "event/getTaskByUserId",
+  async (details: { userId: string; token: string }): Promise<Task[]> => {
+    const response = await eventService.getTaskByUserId(
+      details.userId,
+      details.token
+    );
+    return response;
+  }
+);
+
 export const createSubtaskToTask = createAsyncThunk(
   "event/createSubtaskToTask",
   async (details: {
@@ -217,6 +228,21 @@ const eventSlice = createSlice({
         (state, action: PayloadAction<Event[]>) => {
           state.status = "succeeded";
           state.events = action.payload;
+        }
+      )
+      .addCase(getTaskByUserId.rejected, (state, action) => {
+        state.status = "failed";
+        state.error =
+          action.error.message || "Failed to fetch tasks by project ID";
+      })
+      .addCase(getTaskByUserId.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(
+        getTaskByUserId.fulfilled,
+        (state, action: PayloadAction<Task[]>) => {
+          state.status = "succeeded";
+          state.tasks = action.payload;
         }
       )
       .addCase(getEventByUserId.rejected, (state, action) => {

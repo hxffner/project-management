@@ -1,3 +1,5 @@
+import { ProjectResponse } from "../features/project/projectService";
+
 export type Event = {
   id: number;
   name: string;
@@ -15,6 +17,7 @@ export type Task = {
   endDate: Date;
   createdAt: string;
   status: string;
+  project: ProjectResponse;
   subTasks: SubTask[];
 };
 

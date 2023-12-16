@@ -3,16 +3,11 @@ import { Link } from "react-router-dom";
 
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { logout, selectUser } from "../features/auth/authSlice";
+import Notifications from "./Notifications";
 
 const Sidebar: FC = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    user ? navigate("/calendar") : navigate("/register");
-  }, [user, navigate]);
-  
 
   return (
     <aside className="fixed top-0 left-0 h-full w-72 p-3 bg-base-300 flex flex-col">
@@ -68,6 +63,12 @@ const Sidebar: FC = () => {
                 </svg>
                 <span>Projects</span>
               </Link>
+            </li>
+
+            <li className="rounded-sm">
+              <span>
+                <Notifications />
+              </span>
             </li>
           </ul>
         </div>
