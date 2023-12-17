@@ -12,8 +12,15 @@ public class UploadedFile {
     @Column(name = "filename")
     private String filename;
 
-    public UploadedFile(String filename) {
+    @Column(name = "extension")
+    private String extension;
+
+    public UploadedFile() {
+    }
+
+    public UploadedFile(String filename, String extension) {
         this.filename = filename;
+        this.extension = extension;
     }
 
     public Long getId() {
@@ -28,11 +35,20 @@ public class UploadedFile {
         this.filename = filename;
     }
 
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
+
     @Override
     public String toString() {
         return "UploadedFile{" +
                 "id=" + id +
                 ", filename='" + filename + '\'' +
+                ", extension='" + extension + '\'' +
                 '}';
     }
 }
