@@ -182,12 +182,13 @@ public class CalendarEntryController {
 
     @PostMapping("/files/{taskId}")
     public ResponseEntity<?> uploadFile(@PathVariable Long taskId, @RequestBody MultipartFile file) {
+        Optional<Task> task = taskRepository.findById(taskId);
+        if(task.isEmpty())
+            return ResponseEntity.badRequest().body(new MessageResponse("No task with id: " + taskId));
+
         UploadedFile uploadedFile = fileRepository.save(new UploadedFile(file.getName(), StringUtils.getFilenameExtension(file.getOriginalFilename())));
         try {
             Files.copy(file.getInputStream(), filePath.resolve(uploadedFile.getId().toString() + "." + StringUtils.getFilenameExtension(file.getOriginalFilename())), StandardCopyOption.REPLACE_EXISTING);
-            Optional<Task> task = taskRepository.findById(taskId);
-            if(task.isEmpty())
-                return ResponseEntity.badRequest().body(new MessageResponse("No task with id: " + taskId));
             task.get().addFileReference(uploadedFile);
             taskRepository.save(task.get());
             return ResponseEntity.ok(new MessageResponse("File uploaded"));
@@ -199,10 +200,10 @@ public class CalendarEntryController {
         }
     }
 
-    @DeleteMapping("/files/{taskId}/{fileId}")
-    public void deleteFile(@PathVariable(value = "fileId") Long id, @PathVariable(value = "taskId") Long taskId) {
+    @DeleteMapping("/files/{taskId}/{fileId}.{extension}")
+    public void deleteFile(@PathVariable(value = "fileId") Long id, @PathVariable(value = "extension") String extension, @PathVariable(value = "taskId") Long taskId) {
         try {
-            Files.delete(filePath.resolve(id.toString()));
+            Files.delete(filePath.resolve(id.toString() + "." + extension));
             UploadedFile file = fileRepository.getUploadedFileById(id).get();
             taskRepository.findById(taskId).get().dereferenceFile(file);
             fileRepository.delete(file);
