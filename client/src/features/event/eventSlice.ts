@@ -17,6 +17,9 @@ interface EventState {
   events: Event[];
   fileUploadStatus: "idle" | "loading" | "succeeded" | "failed";
   fileUploadError: string | null;
+  fileFetchStatus: "idle" | "loading" | "succeeded" | "failed";
+  fileFetchError: string | null;
+  fileData: number[] | null;
 }
 
 const initialState: EventState = {
@@ -27,11 +30,34 @@ const initialState: EventState = {
   events: [],
   fileUploadStatus: "idle",
   fileUploadError: null,
+  fileFetchStatus: "idle",
+  fileFetchError: null,
+  fileData: null,
 };
+
+export const fetchFile = createAsyncThunk(
+  "event/fetchFile",
+  async (details: { fileId: number; token: string }): Promise<number[]> => {
+    const { fileId, token } = details;
+
+    const response = await eventService.getFile(fileId, token);
+
+    // Convert Uint8Array to a regular array of numbers
+    const dataArray = Array.from(response);
+
+    return dataArray;
+  }
+);
+
+
 
 export const uploadFile = createAsyncThunk(
   "event/uploadFile",
-  async (fileData: { taskId: number; file: File; token: string }): Promise<void> => {
+  async (fileData: {
+    taskId: number;
+    file: File;
+    token: string;
+  }): Promise<void> => {
     const { taskId, file, token } = fileData;
 
     try {
@@ -161,6 +187,17 @@ const eventSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchFile.pending, (state) => {
+        state.fileFetchStatus = "loading";
+      })
+      .addCase(fetchFile.fulfilled, (state, action) => {
+        state.fileFetchStatus = "succeeded";
+        state.fileData = action.payload;
+      })
+      .addCase(fetchFile.rejected, (state, action) => {
+        state.fileFetchStatus = "failed";
+        state.fileFetchError = action.error.message || "Failed to fetch file";
+      })
       .addCase(uploadFile.pending, (state) => {
         state.fileUploadStatus = "loading";
       })
@@ -310,5 +347,6 @@ const eventSlice = createSlice({
 
 export const selectTasks = (state: RootState) => state.event.tasks;
 export const selectEvents = (state: RootState) => state.event.events;
+export const selectFileData = (state: RootState) => state.event.fileData;
 
 export default eventSlice.reducer;

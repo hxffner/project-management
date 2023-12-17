@@ -13,6 +13,21 @@ export interface EventResponse {
 }
 
 export const eventService = {
+  getFile: async (fileId: number, token: string): Promise<Uint8Array> => {
+    const response = await fetch(`${API_BASE_URL}/api/files/${fileId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch file");
+    }
+
+    const buffer = await response.arrayBuffer();
+    return new Uint8Array(buffer);
+    },
+
   uploadFile: async (taskId: number, file: File, token: string) => {
     const formData = new FormData();
     formData.append("file", file);
