@@ -15,6 +15,8 @@ interface EventState {
   error: string | null;
   tasks: Task[];
   events: Event[];
+  fileUploadStatus: "idle" | "loading" | "succeeded" | "failed";
+  fileUploadError: string | null;
 }
 
 const initialState: EventState = {
@@ -23,7 +25,25 @@ const initialState: EventState = {
   error: null,
   tasks: [],
   events: [],
+  fileUploadStatus: "idle",
+  fileUploadError: null,
 };
+
+export const uploadFile = createAsyncThunk(
+  "event/uploadFile",
+  async (fileData: { taskId: number; file: File; token: string }): Promise<void> => {
+    const { taskId, file, token } = fileData;
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      await eventService.uploadFile(taskId, file, token);
+    } catch (error) {
+      throw new Error("File upload failed");
+    }
+  }
+);
 
 export const createTask = createAsyncThunk(
   "event/createTask",
@@ -141,6 +161,16 @@ const eventSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(uploadFile.pending, (state) => {
+        state.fileUploadStatus = "loading";
+      })
+      .addCase(uploadFile.fulfilled, (state) => {
+        state.fileUploadStatus = "succeeded";
+      })
+      .addCase(uploadFile.rejected, (state, action) => {
+        state.fileUploadStatus = "failed";
+        state.fileUploadError = action.error.message || "File upload failed";
+      })
       .addCase(createEvent.pending, (state) => {
         state.status = "loading";
       })

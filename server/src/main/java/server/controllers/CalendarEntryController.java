@@ -159,7 +159,7 @@ public class CalendarEntryController {
     }
 
     //CHANGE HERE FOR YOUR OWN PATH PLS
-    private final String pathString = "C:/Users/sromeo/IdeaProjects/project-management/server/src/main/resources/files";
+    private final String pathString = "C:/Users/Marcell/Desktop/project-management/server/src/main/resources/files";
     private final Path filePath = Paths.get(pathString);
 
     @Autowired
